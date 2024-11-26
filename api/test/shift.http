@@ -1,0 +1,34 @@
+### Shifts
+
+# Alle Schichten abrufen
+GET http://localhost:8080/api/shifts
+
+### Neue Schicht erstellen
+POST http://localhost:8080/api/shifts
+Content-Type: application/json
+
+{
+    "employee_id": 1,
+    "shift_type_id": 1,
+    "start_time": "2024-01-20T09:00:00Z",
+    "end_time": "2024-01-20T17:00:00Z",
+    "description": "Frühdienst"
+}
+
+### Einzelne Schicht abrufen
+GET http://localhost:8080/api/shifts/1
+
+### Schicht aktualisieren
+PUT http://localhost:8080/api/shifts/1
+Content-Type: application/json
+
+{
+    "employee_id": 1,
+    "shift_type_id": 2,
+    "start_time": "2024-01-20T10:00:00Z",
+    "end_time": "2024-01-20T18:00:00Z",
+    "description": "Spätdienst"
+}
+
+### Schicht löschen
+DELETE http://localhost:8080/api/shifts/1

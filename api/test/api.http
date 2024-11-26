@@ -1,0 +1,138 @@
+### Shifts
+
+# Alle Schichten abrufen
+GET http://localhost:8080/api/shifts
+
+### Neue Schicht erstellen
+POST http://localhost:8080/api/shifts
+Content-Type: application/json
+
+{
+    "employee_id": 1,
+    "shift_type_id": 1,
+    "start_time": "2024-01-20T09:00:00Z",
+    "end_time": "2024-01-20T17:00:00Z",
+    "description": "Frühdienst"
+}
+
+### Einzelne Schicht abrufen
+GET http://localhost:8080/api/shifts/1
+
+### Schicht aktualisieren
+PUT http://localhost:8080/api/shifts/1
+Content-Type: application/json
+
+{
+    "employee_id": 1,
+    "shift_type_id": 2,
+    "start_time": "2024-01-20T10:00:00Z",
+    "end_time": "2024-01-20T18:00:00Z",
+    "description": "Spätdienst"
+}
+
+### Schicht löschen
+DELETE http://localhost:8080/api/shifts/1
+
+### ShiftBlocks
+
+# Alle Schichtblöcke abrufen
+GET http://localhost:8080/api/shiftblocks
+
+### Neuen Schichtblock erstellen
+POST http://localhost:8080/api/shiftblocks
+Content-Type: application/json
+
+{
+    "name": "Woche 1",
+    "start_date": "2024-01-22T00:00:00Z",
+    "employee_id": 1,
+    "description": "Erste Januarwoche",
+    "monday": {
+        "shift_type_id": 1
+    },
+    "tuesday": {
+        "shift_type_id": 2
+    },
+    "wednesday": {
+        "shift_type_id": 1
+    },
+    "thursday": {
+        "shift_type_id": 2
+    },
+    "friday": {
+        "shift_type_id": 1
+    },
+    "saturday": {
+        "shift_type_id": 3
+    },
+    "sunday": {
+        "shift_type_id": 3
+    }
+}
+
+### Einzelnen Schichtblock abrufen
+GET http://localhost:8080/api/shiftblocks/1
+
+### Schichtblock aktualisieren
+PUT http://localhost:8080/api/shiftblocks/1
+Content-Type: application/json
+
+{
+    "name": "Woche 1 Update",
+    "start_date": "2024-01-22T00:00:00Z",
+    "employee_id": 1,
+    "description": "Erste Januarwoche aktualisiert",
+    "monday": {
+        "shift_type_id": 2
+    },
+    "tuesday": {
+        "shift_type_id": 1
+    },
+    "wednesday": {
+        "shift_type_id": 2
+    },
+    "thursday": {
+        "shift_type_id": 1
+    },
+    "friday": {
+        "shift_type_id": 2
+    },
+    "saturday": {
+        "shift_type_id": 3
+    },
+    "sunday": {
+        "shift_type_id": 3
+    }
+}
+
+### Schichtblock löschen
+DELETE http://localhost:8080/api/shiftblocks/1
+
+### ShiftTypes
+
+# Alle Schichttypen abrufen
+GET http://localhost:8080/api/shifttypes
+
+### Neuen Schichttyp erstellen
+POST http://localhost:8080/api/shifttypes
+Content-Type: application/json
+
+{
+    "name": "Frühdienst",
+    "description": "Regulärer Frühdienst von 6-14 Uhr"
+}
+
+### Einzelnen Schichttyp abrufen
+GET http://localhost:8080/api/shifttypes/1
+
+### Schichttyp aktualisieren
+PUT http://localhost:8080/api/shifttypes/1
+Content-Type: application/json
+
+{
+    "name": "Spätdienst",
+    "description": "Regulärer Spätdienst von 14-22 Uhr"
+}
+
+### Schichttyp löschen
+DELETE http://localhost:8080/api/shifttypes/1
