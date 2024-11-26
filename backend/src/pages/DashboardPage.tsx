@@ -1,19 +1,53 @@
-import { Outlet } from 'react-router-dom';
-import Sidebar from '@/components/Sidebar';
-import TopBar from '@/components/TopBar';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-const Dashboard = () => {
+const DashboardPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <Sidebar />
-      <div className="flex-1">
-        <TopBar />
-        <div className="p-8">
-          <Outlet />
-        </div>
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Dashboard Übersicht</h1>
+      
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Mitarbeiter</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">128</div>
+            <p className="text-xs text-muted-foreground">Aktive Mitarbeiter</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Schichten</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-muted-foreground">Aktive Schichten</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Abteilungen</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">8</div>
+            <p className="text-xs text-muted-foreground">Gesamt</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Auslastung</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">96%</div>
+            <p className="text-xs text-muted-foreground">Schichtabdeckung</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default DashboardPage
