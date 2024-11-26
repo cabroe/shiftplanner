@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"shift-planner/api/internal/handlers"
 	"shift-planner/api/internal/models"
+	"time"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/postgres"
@@ -12,11 +15,31 @@ import (
 )
 
 func main() {
-	// Datenbankverbindung
-	dsn := "host=localhost user=postgres password=postgres dbname=shift_planner port=5432 sslmode=disable"
-	// docker
-	// dsn := "host=db user=postgres password=postgres dbname=shift_planner port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// Datenbankverbindung konfigurieren
+	// In Docker: DB_HOST="db" (gesetzt durch docker-compose.yml)
+	// Lokal: DB_HOST="" -> verwendet "localhost" als Standard
+	var dbHost = os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
+
+	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shift_planner port=5432 sslmode=disable", dbHost)
+
+	// Datenbankverbindung mit Retry-Mechanismus
+	var db *gorm.DB
+	var err error
+	maxRetries := 5
+
+	for i := 0; i < maxRetries; i++ {
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err == nil {
+			log.Printf("Datenbankverbindung erfolgreich hergestellt")
+			break
+		}
+		log.Printf("Verbindungsversuch %d von %d, nächster Versuch in 5 Sekunden...", i+1, maxRetries)
+		time.Sleep(5 * time.Second)
+	}
+
 	if err != nil {
 		log.Fatal("Fehler beim Verbinden zur Datenbank:", err)
 	}
