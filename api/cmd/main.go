@@ -21,7 +21,7 @@ func main() {
 		dbHost = "localhost"
 	}
 
-	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shift_planner port=5432 sslmode=disable", dbHost)
+	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shiftplanner port=5432 sslmode=disable", dbHost)
 
 	// Datenbankverbindung konfigurieren
 	var db *gorm.DB
