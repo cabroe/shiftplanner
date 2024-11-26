@@ -16,8 +16,6 @@ import (
 
 func main() {
 	// Datenbankverbindung konfigurieren
-	// In Docker: DB_HOST="db" (gesetzt durch docker-compose.yml)
-	// Lokal: DB_HOST="" -> verwendet "localhost" als Standard
 	var dbHost = os.Getenv("DB_HOST")
 	if dbHost == "" {
 		dbHost = "localhost"
@@ -25,7 +23,7 @@ func main() {
 
 	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shift_planner port=5432 sslmode=disable", dbHost)
 
-	// Datenbankverbindung mit Retry-Mechanismus
+	// Datenbankverbindung konfigurieren
 	var db *gorm.DB
 	var err error
 	maxRetries := 5
