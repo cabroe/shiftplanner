@@ -15,12 +15,13 @@ import (
 )
 
 func main() {
-	// Datenbankverbindung konfigurieren
+	// Docker oder Localhost?
 	var dbHost = os.Getenv("DB_HOST")
 	if dbHost == "" {
 		dbHost = "localhost"
 	}
 
+	// Datenbankverbindung konfigurieren
 	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shiftplanner port=5432 sslmode=disable", dbHost)
 
 	// Datenbankverbindung konfigurieren
