@@ -22,9 +22,7 @@ func main() {
 	}
 
 	// Datenbankverbindung konfigurieren
-	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shiftplanner port=5432 sslmode=disable", dbHost)
-
-	// Datenbankverbindung konfigurieren
+	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shiftplanner port=5432 sslmode=disable", dbHost)n
 	var db *gorm.DB
 	var err error
 	maxRetries := 5
