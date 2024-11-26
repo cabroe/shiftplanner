@@ -56,8 +56,10 @@ func main() {
 	db.AutoMigrate(&models.Shift{})      // Dann Shifts
 	db.AutoMigrate(&models.ShiftBlock{}) // Zuletzt ShiftBlocks
 
-	// Routen definieren
+	// Router initialisieren
 	router := mux.NewRouter()
+
+	// Handler definieren
 	shiftHandler := handlers.NewShiftHandler(db)
 	employeeHandler := handlers.NewEmployeeHandler(db)
 	shiftTypeHandler := handlers.NewShiftTypeHandler(db)
