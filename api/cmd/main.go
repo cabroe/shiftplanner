@@ -42,21 +42,26 @@ func main() {
 		log.Fatal("Fehler beim Verbinden zur Datenbank:", err)
 	}
 
-	// Auto-Migration
-	// Reihenfolge beachten!!!
+	// Datenbank-Reset
+	db.Migrator().DropTable(&models.ShiftBlock{})
+	db.Migrator().DropTable(&models.Shift{})
+	db.Migrator().DropTable(&models.Employee{})
+	db.Migrator().DropTable(&models.ShiftType{})
+	db.Migrator().DropTable(&models.Department{})
+
+	// Auto-Migration in korrekter Reihenfolge
 	db.AutoMigrate(&models.Department{}) // Erst Department
 	db.AutoMigrate(&models.Employee{})   // Dann Employee
 	db.AutoMigrate(&models.ShiftType{})
 	db.AutoMigrate(&models.Shift{})      // Dann Shifts
 	db.AutoMigrate(&models.ShiftBlock{}) // Zuletzt ShiftBlocks
 
+	// Routen definieren
 	router := mux.NewRouter()
 	shiftHandler := handlers.NewShiftHandler(db)
 	employeeHandler := handlers.NewEmployeeHandler(db)
 	shiftTypeHandler := handlers.NewShiftTypeHandler(db)
-	// ShiftBlock Handler initialisieren
 	shiftBlockHandler := handlers.NewShiftBlockHandler(db)
-	// Department Handler initialisieren
 	departmentHandler := handlers.NewDepartmentHandler(db)
 
 	// Department Routen
@@ -66,18 +71,21 @@ func main() {
 	router.HandleFunc("/api/departments/{id}", departmentHandler.UpdateDepartment).Methods("PUT")
 	router.HandleFunc("/api/departments/{id}", departmentHandler.DeleteDepartment).Methods("DELETE")
 
+	// ShiftType Routen
 	router.HandleFunc("/api/shifts", shiftHandler.GetShifts).Methods("GET")
 	router.HandleFunc("/api/shifts", shiftHandler.CreateShift).Methods("POST")
 	router.HandleFunc("/api/shifts/{id}", shiftHandler.GetShift).Methods("GET")
 	router.HandleFunc("/api/shifts/{id}", shiftHandler.UpdateShift).Methods("PUT")
 	router.HandleFunc("/api/shifts/{id}", shiftHandler.DeleteShift).Methods("DELETE")
 
+	// ShiftBlock Routen
 	router.HandleFunc("/api/employees", employeeHandler.GetEmployees).Methods("GET")
 	router.HandleFunc("/api/employees", employeeHandler.CreateEmployee).Methods("POST")
 	router.HandleFunc("/api/employees/{id}", employeeHandler.GetEmployee).Methods("GET")
 	router.HandleFunc("/api/employees/{id}", employeeHandler.UpdateEmployee).Methods("PUT")
 	router.HandleFunc("/api/employees/{id}", employeeHandler.DeleteEmployee).Methods("DELETE")
 
+	// ShiftType Routen
 	router.HandleFunc("/api/shifttypes", shiftTypeHandler.GetShiftTypes).Methods("GET")
 	router.HandleFunc("/api/shifttypes", shiftTypeHandler.CreateShiftType).Methods("POST")
 	router.HandleFunc("/api/shifttypes/{id}", shiftTypeHandler.GetShiftType).Methods("GET")
