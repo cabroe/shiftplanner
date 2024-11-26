@@ -1,44 +1,133 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ShiftBlockForm } from "@/components/forms/ShiftBlockForm"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { PlusCircle, Pencil, Trash2 } from "lucide-react"
+
+interface ShiftBlock {
+  ID: number
+  name: string
+  description: string
+  start_date: string
+  employee_id: number
+  employee: {
+    first_name: string
+    last_name: string
+  }
+  monday: { shift_type_id: number, shift_type: { name: string } }
+  tuesday: { shift_type_id: number, shift_type: { name: string } }
+  wednesday: { shift_type_id: number, shift_type: { name: string } }
+  thursday: { shift_type_id: number, shift_type: { name: string } }
+  friday: { shift_type_id: number, shift_type: { name: string } }
+  saturday: { shift_type_id: number, shift_type: { name: string } }
+  sunday: { shift_type_id: number, shift_type: { name: string } }
+}
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 const ShiftBlocksPage = () => {
+  const [shiftBlocks, setShiftBlocks] = useState<ShiftBlock[]>([])
+  const [selectedShiftBlock, setSelectedShiftBlock] = useState<ShiftBlock | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  useEffect(() => {
+    loadShiftBlocks()
+  }, [])
+
+  const loadShiftBlocks = () => {
+    fetch(`${API_URL}/api/shiftblocks`)
+      .then(res => res.json())
+      .then(response => setShiftBlocks(response.data))
+  }
+
+  const handleDelete = (id: number) => {
+    if (confirm('Schichtblock wirklich löschen?')) {
+      fetch(`${API_URL}/api/shiftblocks/${id}`, {
+        method: 'DELETE'
+      }).then(() => loadShiftBlocks())
+    }
+  }
+
+  const handleEdit = (shiftBlock: ShiftBlock) => {
+    setSelectedShiftBlock(shiftBlock)
+    setIsDialogOpen(true)
+  }
+
+  const handleFormSubmit = () => {
+    setIsDialogOpen(false)
+    setSelectedShiftBlock(null)
+    loadShiftBlocks()
+  }
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Schichtblöcke Übersicht</h1>
-      
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle>Frühschicht</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Zeitraum: 06:00 - 14:00</p>
-            <p>Pausenzeit: 30 min</p>
-            <p>Mitarbeiter benötigt: 5</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Spätschicht</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Zeitraum: 14:00 - 22:00</p>
-            <p>Pausenzeit: 30 min</p>
-            <p>Mitarbeiter benötigt: 4</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Nachtschicht</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Zeitraum: 22:00 - 06:00</p>
-            <p>Pausenzeit: 45 min</p>
-            <p>Mitarbeiter benötigt: 3</p>
-          </CardContent>
-        </Card>
+    <div className="container mx-auto py-10">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Schichtblöcke</h1>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => setSelectedShiftBlock(null)}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Neuer Schichtblock
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {selectedShiftBlock ? 'Schichtblock bearbeiten' : 'Neuer Schichtblock'}
+              </DialogTitle>
+            </DialogHeader>
+            <ShiftBlockForm 
+              shiftBlock={selectedShiftBlock} 
+              onSubmit={handleFormSubmit}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Mitarbeiter</TableHead>
+            <TableHead>Startdatum</TableHead>
+            <TableHead>Mo</TableHead>
+            <TableHead>Di</TableHead>
+            <TableHead>Mi</TableHead>
+            <TableHead>Do</TableHead>
+            <TableHead>Fr</TableHead>
+            <TableHead>Sa</TableHead>
+            <TableHead>So</TableHead>
+            <TableHead className="w-[100px]">Aktionen</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {shiftBlocks.map(block => (
+            <TableRow key={block.ID}>
+              <TableCell>{block.name}</TableCell>
+              <TableCell>{block.employee?.first_name} {block.employee?.last_name}</TableCell>
+              <TableCell>{new Date(block.start_date).toLocaleDateString()}</TableCell>
+              <TableCell>{block.monday?.shift_type?.name}</TableCell>
+              <TableCell>{block.tuesday?.shift_type?.name}</TableCell>
+              <TableCell>{block.wednesday?.shift_type?.name}</TableCell>
+              <TableCell>{block.thursday?.shift_type?.name}</TableCell>
+              <TableCell>{block.friday?.shift_type?.name}</TableCell>
+              <TableCell>{block.saturday?.shift_type?.name}</TableCell>
+              <TableCell>{block.sunday?.shift_type?.name}</TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(block)}>
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(block.ID)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }
