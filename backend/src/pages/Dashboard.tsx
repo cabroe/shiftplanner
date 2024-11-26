@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,58 +11,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   Search,
-  LayoutDashboard, 
-  Users, 
-  Calendar,
   Settings,
   LogOut,
-  User,
-  Building2
+  User
 } from 'lucide-react';
+import Sidebar from '@/components/Sidebar';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
-        <div className="p-4">
-          <h1 className="text-2xl font-bold text-gray-800">ShiftPlanner</h1>
-        </div>
-        <nav className="mt-4">
-          <NavLink to="/">
-            <Button variant="ghost" className="w-full justify-start p-4">
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-          </NavLink>
-          <NavLink to="/employees">
-            <Button variant="ghost" className="w-full justify-start p-4">
-              <Users className="mr-2 h-4 w-4" />
-              Mitarbeiter
-            </Button>
-          </NavLink>
-          <NavLink to="/departments">
-            <Button variant="ghost" className="w-full justify-start p-4">
-              <Building2 className="mr-2 h-4 w-4" />
-              Abteilungen
-            </Button>
-          </NavLink>
-          <NavLink to="/shift-planner">
-            <Button variant="ghost" className="w-full justify-start p-4">
-              <Calendar className="mr-2 h-4 w-4" />
-              Schichtplan
-            </Button>
-          </NavLink>
-          <NavLink to="/settings">
-            <Button variant="ghost" className="w-full justify-start p-4">
-              <Settings className="mr-2 h-4 w-4" />
-              Einstellungen
-            </Button>
-          </NavLink>
-        </nav>
-      </div>
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1">
