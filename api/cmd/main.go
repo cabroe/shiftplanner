@@ -65,13 +65,6 @@ func main() {
 	shiftBlockHandler := handlers.NewShiftBlockHandler(db)
 	departmentHandler := handlers.NewDepartmentHandler(db)
 
-	// Department Routen
-	router.HandleFunc("/api/departments", departmentHandler.GetDepartments).Methods("GET")
-	router.HandleFunc("/api/departments", departmentHandler.CreateDepartment).Methods("POST")
-	router.HandleFunc("/api/departments/{id}", departmentHandler.GetDepartment).Methods("GET")
-	router.HandleFunc("/api/departments/{id}", departmentHandler.UpdateDepartment).Methods("PUT")
-	router.HandleFunc("/api/departments/{id}", departmentHandler.DeleteDepartment).Methods("DELETE")
-
 	// ShiftType Routen
 	router.HandleFunc("/api/shifts", shiftHandler.GetShifts).Methods("GET")
 	router.HandleFunc("/api/shifts", shiftHandler.CreateShift).Methods("POST")
@@ -99,6 +92,13 @@ func main() {
 	router.HandleFunc("/api/shiftblocks/{id}", shiftBlockHandler.GetShiftBlock).Methods("GET")
 	router.HandleFunc("/api/shiftblocks/{id}", shiftBlockHandler.UpdateShiftBlock).Methods("PUT")
 	router.HandleFunc("/api/shiftblocks/{id}", shiftBlockHandler.DeleteShiftBlock).Methods("DELETE")
+
+	// Department Routen
+	router.HandleFunc("/api/departments", departmentHandler.GetDepartments).Methods("GET")
+	router.HandleFunc("/api/departments", departmentHandler.CreateDepartment).Methods("POST")
+	router.HandleFunc("/api/departments/{id}", departmentHandler.GetDepartment).Methods("GET")
+	router.HandleFunc("/api/departments/{id}", departmentHandler.UpdateDepartment).Methods("PUT")
+	router.HandleFunc("/api/departments/{id}", departmentHandler.DeleteDepartment).Methods("DELETE")
 
 	log.Println("Server startet auf Port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", router))
