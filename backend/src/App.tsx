@@ -20,9 +20,9 @@ const App = () => {
           <Route path="shift-blocks" element={<ShiftBlocksPage />} />
           <Route path="shift-planner" element={<ShiftPlannerPage />} />
           <Route path="shift-types" element={<ShiftTypesPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="settings" element={<SettingsPage />} />          
         </Route>
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </Router>
   );
