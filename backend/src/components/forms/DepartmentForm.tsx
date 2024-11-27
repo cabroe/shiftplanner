@@ -3,12 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-
-interface Department {
-  ID?: number
-  name: string
-  description: string
-}
+import { Department } from "@/types"
 
 interface DepartmentFormProps {
   department?: Department | null
@@ -19,9 +14,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
   const [formData, setFormData] = useState<Department>({
+    ID: 0,
     name: '',
     description: ''
-  })
+  })  
 
   useEffect(() => {
     const initializeForm = async () => {

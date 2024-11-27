@@ -34,10 +34,20 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
 
   useEffect(() => {
     const initializeForm = async () => {
+      // Wenn ein ShiftType bearbeitet wird, lade die vollständigen Daten
       if (shiftType?.ID) {
         const response = await fetch(`${API_URL}/api/shifttypes/${shiftType.ID}`)
         const data = await response.json()
         setFormData(data.data)
+      } else {
+        // Reset Form wenn kein ShiftType vorhanden
+        setFormData({
+          ID: 0,
+          name: '',
+          description: '',
+          start_time: '',
+          end_time: ''
+        })
       }
     }
     
@@ -127,4 +137,5 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
       </Button>
     </form>
   )
+
 }

@@ -28,6 +28,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
   const [departments, setDepartments] = useState<Department[]>([])
   const [formData, setFormData] = useState<Employee>({
+    ID: 0,
     first_name: '',
     last_name: '',
     email: '',

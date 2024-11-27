@@ -3,33 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-interface Employee {
-  ID: number
-  first_name: string
-  last_name: string
-}
-
-interface ShiftType {
-  ID: number
-  name: string
-}
-
-interface ShiftBlock {
-  ID?: number
-  name: string
-  description: string
-  start_date: string
-  employee_id: number
-  employee?: Employee
-  monday: { shift_type_id: number, shift_type?: ShiftType }
-  tuesday: { shift_type_id: number, shift_type?: ShiftType }
-  wednesday: { shift_type_id: number, shift_type?: ShiftType }
-  thursday: { shift_type_id: number, shift_type?: ShiftType }
-  friday: { shift_type_id: number, shift_type?: ShiftType }
-  saturday: { shift_type_id: number, shift_type?: ShiftType }
-  sunday: { shift_type_id: number, shift_type?: ShiftType }
-}
+import { Employee, ShiftBlock, ShiftType } from "@/types"
 
 interface ShiftBlockFormProps {
   shiftBlock?: ShiftBlock | null
@@ -42,17 +16,25 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [shiftTypes, setShiftTypes] = useState<ShiftType[]>([])
   const [formData, setFormData] = useState<ShiftBlock>({
+    ID: 0,
     name: '',
     description: '',
     start_date: '',
     employee_id: 0,
-    monday: { shift_type_id: 0 },
-    tuesday: { shift_type_id: 0 },
-    wednesday: { shift_type_id: 0 },
-    thursday: { shift_type_id: 0 },
-    friday: { shift_type_id: 0 },
-    saturday: { shift_type_id: 0 },
-    sunday: { shift_type_id: 0 }
+    employee: {
+      ID: 0,
+      first_name: '',
+      last_name: '',
+      email: '',
+      department_id: 0
+    },
+    monday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
+    tuesday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
+    wednesday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
+    thursday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
+    friday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
+    saturday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
+    sunday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } }
   })
 
   useEffect(() => {
@@ -83,7 +65,6 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Stelle sicher, dass alle IDs als Zahlen übergeben werden
     const submitData = {
       ...formData,
       employee_id: Number(formData.employee_id),
@@ -147,13 +128,15 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         <Label htmlFor="employee">Mitarbeiter</Label>
         <Select 
           value={formData.employee_id?.toString()}
-          onValueChange={value => {
+          onValueChange={(value) => {
             const selectedEmployee = employees.find(emp => emp.ID.toString() === value)
-            setFormData({
-              ...formData,
-              employee_id: parseInt(value),
-              employee: selectedEmployee
-            })
+            if (selectedEmployee) {
+              setFormData({
+                ...formData,
+                employee_id: parseInt(value),
+                employee: selectedEmployee
+              })
+            }
           }}
         >
           <SelectTrigger>
