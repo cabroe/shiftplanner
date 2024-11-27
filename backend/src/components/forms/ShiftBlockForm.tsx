@@ -40,7 +40,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [shiftTypes, setShiftTypes] = useState<ShiftType[]>([])
-  const [formData, setFormData] = useState<ShiftBlock>({
+
+  const defaultValues: ShiftBlock = {
     name: '',
     description: '',
     start_date: '',
@@ -52,42 +53,44 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
     friday: { shift_type_id: 0 },
     saturday: { shift_type_id: 0 },
     sunday: { shift_type_id: 0 }
-  })
+  }
+
+  const [formData, setFormData] = useState<ShiftBlock>(defaultValues)
 
   useEffect(() => {
-    if (shiftBlock) {
-      setFormData(shiftBlock)
-    }
+    setFormData(shiftBlock || defaultValues)
     loadEmployees()
     loadShiftTypes()
   }, [shiftBlock])
 
-  const loadEmployees = () => {
-    fetch(`${API_URL}/api/employees`)
-      .then(res => res.json())
-      .then(response => setEmployees(response.data))
+  const loadEmployees = async () => {
+    const response = await fetch(`${API_URL}/api/employees`)
+    const data = await response.json()
+    setEmployees(data.data)
   }
 
-  const loadShiftTypes = () => {
-    fetch(`${API_URL}/api/shifttypes`)
-      .then(res => res.json())
-      .then(response => setShiftTypes(response.data))
+  const loadShiftTypes = async () => {
+    const response = await fetch(`${API_URL}/api/shifttypes`)
+    const data = await response.json()
+    setShiftTypes(data.data)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     const url = shiftBlock?.ID 
       ? `${API_URL}/api/shiftblocks/${shiftBlock.ID}`
       : `${API_URL}/api/shiftblocks`
     
-    fetch(url, {
+    await fetch(url, {
       method: shiftBlock?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData)
-    }).then(() => onSubmit())
+    })
+    
+    onSubmit()
   }
 
   return (
@@ -96,7 +99,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          value={formData.name}
+          value={formData.name || ''}
           onChange={e => setFormData({...formData, name: e.target.value})}
         />
       </div>
@@ -105,7 +108,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         <Label htmlFor="description">Beschreibung</Label>
         <Input
           id="description"
-          value={formData.description}
+          value={formData.description || ''}
           onChange={e => setFormData({...formData, description: e.target.value})}
         />
       </div>
@@ -115,7 +118,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         <Input
           id="start_date"
           type="date"
-          value={formData.start_date.split('T')[0]}
+          value={formData.start_date?.split('T')[0] || ''}
           onChange={e => setFormData({...formData, start_date: e.target.value})}
         />
       </div>
@@ -123,7 +126,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       <div className="grid w-full gap-2">
         <Label htmlFor="employee">Mitarbeiter</Label>
         <Select 
-          value={formData.employee_id.toString()}
+          value={formData.employee_id?.toString() || '0'}
           onValueChange={value => setFormData({...formData, employee_id: parseInt(value)})}
         >
           <SelectTrigger>
@@ -143,7 +146,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         <div key={day} className="grid w-full gap-2">
           <Label htmlFor={day}>{day.charAt(0).toUpperCase() + day.slice(1)}</Label>
             <Select 
-                value={(formData[day as keyof typeof formData] as { shift_type_id: number }).shift_type_id.toString()}
+                value={(formData[day as keyof typeof formData] as { shift_type_id: number })?.shift_type_id?.toString() || '0'}
                 onValueChange={value => setFormData({
                     ...formData,
                     [day]: { shift_type_id: parseInt(value) }

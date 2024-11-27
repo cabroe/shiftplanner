@@ -18,31 +18,33 @@ interface DepartmentFormProps {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
-  const [formData, setFormData] = useState<Department>({
+  const defaultValues: Department = {
     name: '',
     description: ''
-  })
+  }
+
+  const [formData, setFormData] = useState<Department>(defaultValues)
 
   useEffect(() => {
-    if (department) {
-      setFormData(department)
-    }
+    setFormData(department || defaultValues)
   }, [department])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     const url = department?.ID 
       ? `${API_URL}/api/departments/${department.ID}`
       : `${API_URL}/api/departments`
     
-    fetch(url, {
+    await fetch(url, {
       method: department?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData)
-    }).then(() => onSubmit())
+    })
+    
+    onSubmit()
   }
 
   return (
@@ -51,7 +53,7 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          value={formData.name}
+          value={formData.name || ''}
           onChange={e => setFormData({...formData, name: e.target.value})}
         />
       </div>
@@ -60,7 +62,7 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
         <Label htmlFor="description">Beschreibung</Label>
         <Textarea
           id="description"
-          value={formData.description}
+          value={formData.description || ''}
           onChange={e => setFormData({...formData, description: e.target.value})}
         />
       </div>

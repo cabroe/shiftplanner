@@ -20,33 +20,35 @@ interface ShiftTypeFormProps {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
-  const [formData, setFormData] = useState<ShiftType>({
+  const defaultValues: ShiftType = {
     name: '',
     description: '',
     start_time: '',
     end_time: ''
-  })
+  }
+
+  const [formData, setFormData] = useState<ShiftType>(defaultValues)
 
   useEffect(() => {
-    if (shiftType) {
-      setFormData(shiftType)
-    }
+    setFormData(shiftType || defaultValues)
   }, [shiftType])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     const url = shiftType?.ID 
       ? `${API_URL}/api/shifttypes/${shiftType.ID}`
       : `${API_URL}/api/shifttypes`
     
-    fetch(url, {
+    await fetch(url, {
       method: shiftType?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData)
-    }).then(() => onSubmit())
+    })
+    
+    onSubmit()
   }
 
   return (
@@ -55,7 +57,7 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          value={formData.name}
+          value={formData.name || ''}
           onChange={e => setFormData({...formData, name: e.target.value})}
         />
       </div>
@@ -64,7 +66,7 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
         <Label htmlFor="description">Beschreibung</Label>
         <Textarea
           id="description"
-          value={formData.description}
+          value={formData.description || ''}
           onChange={e => setFormData({...formData, description: e.target.value})}
         />
       </div>
@@ -74,7 +76,7 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
         <Input
           id="start_time"
           type="time"
-          value={formData.start_time}
+          value={formData.start_time || ''}
           onChange={e => setFormData({...formData, start_time: e.target.value})}
         />
       </div>
@@ -84,7 +86,7 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
         <Input
           id="end_time"
           type="time"
-          value={formData.end_time}
+          value={formData.end_time || ''}
           onChange={e => setFormData({...formData, end_time: e.target.value})}
         />
       </div>
