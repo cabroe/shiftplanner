@@ -3,14 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-
-interface ShiftType {
-  ID?: number
-  name: string
-  description: string
-  start_time: string
-  end_time: string
-}
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ShiftType } from "@/types"
 
 interface ShiftTypeFormProps {
   shiftType?: ShiftType | null
@@ -19,18 +13,35 @@ interface ShiftTypeFormProps {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
+const getTimeOptions = () => {
+  const options = []
+  for(let hour = 0; hour < 24; hour++) {
+    for(let minute of ['00', '30']) {
+      options.push(`${hour.toString().padStart(2, '0')}:${minute}`)
+    }
+  }
+  return options
+}
+
 export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
-  const defaultValues: ShiftType = {
+  const [formData, setFormData] = useState<ShiftType>({
+    ID: 0,
     name: '',
     description: '',
     start_time: '',
     end_time: ''
-  }
-
-  const [formData, setFormData] = useState<ShiftType>(defaultValues)
+  })
 
   useEffect(() => {
-    setFormData(shiftType || defaultValues)
+    const initializeForm = async () => {
+      if (shiftType?.ID) {
+        const response = await fetch(`${API_URL}/api/shifttypes/${shiftType.ID}`)
+        const data = await response.json()
+        setFormData(data.data)
+      }
+    }
+    
+    initializeForm()
   }, [shiftType])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,15 +51,17 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
       ? `${API_URL}/api/shifttypes/${shiftType.ID}`
       : `${API_URL}/api/shifttypes`
     
-    await fetch(url, {
+    const response = await fetch(url, {
       method: shiftType?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData)
     })
-    
-    onSubmit()
+
+    if (response.ok) {
+      onSubmit()
+    }
   }
 
   return (
@@ -57,7 +70,7 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          value={formData.name || ''}
+          value={formData.name}
           onChange={e => setFormData({...formData, name: e.target.value})}
         />
       </div>
@@ -66,29 +79,47 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
         <Label htmlFor="description">Beschreibung</Label>
         <Textarea
           id="description"
-          value={formData.description || ''}
+          value={formData.description}
           onChange={e => setFormData({...formData, description: e.target.value})}
         />
       </div>
 
       <div className="grid w-full gap-2">
         <Label htmlFor="start_time">Startzeit</Label>
-        <Input
-          id="start_time"
-          type="time"
-          value={formData.start_time || ''}
-          onChange={e => setFormData({...formData, start_time: e.target.value})}
-        />
+        <Select
+          value={formData.start_time}
+          onValueChange={value => setFormData({...formData, start_time: value})}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Startzeit wählen" />
+          </SelectTrigger>
+          <SelectContent>
+            {getTimeOptions().map(time => (
+              <SelectItem key={time} value={time}>
+                {time} Uhr
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid w-full gap-2">
         <Label htmlFor="end_time">Endzeit</Label>
-        <Input
-          id="end_time"
-          type="time"
-          value={formData.end_time || ''}
-          onChange={e => setFormData({...formData, end_time: e.target.value})}
-        />
+        <Select
+          value={formData.end_time}
+          onValueChange={value => setFormData({...formData, end_time: value})}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Endzeit wählen" />
+          </SelectTrigger>
+          <SelectContent>
+            {getTimeOptions().map(time => (
+              <SelectItem key={time} value={time}>
+                {time} Uhr
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <Button type="submit" className="w-full">

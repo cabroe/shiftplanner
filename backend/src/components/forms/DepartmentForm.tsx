@@ -18,15 +18,21 @@ interface DepartmentFormProps {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
-  const defaultValues: Department = {
+  const [formData, setFormData] = useState<Department>({
     name: '',
     description: ''
-  }
-
-  const [formData, setFormData] = useState<Department>(defaultValues)
+  })
 
   useEffect(() => {
-    setFormData(department || defaultValues)
+    const initializeForm = async () => {
+      if (department?.ID) {
+        const response = await fetch(`${API_URL}/api/departments/${department.ID}`)
+        const data = await response.json()
+        setFormData(data.data)
+      }
+    }
+    
+    initializeForm()
   }, [department])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,15 +42,17 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
       ? `${API_URL}/api/departments/${department.ID}`
       : `${API_URL}/api/departments`
     
-    await fetch(url, {
+    const response = await fetch(url, {
       method: department?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData)
     })
-    
-    onSubmit()
+
+    if (response.ok) {
+      onSubmit()
+    }
   }
 
   return (
@@ -53,7 +61,7 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          value={formData.name || ''}
+          value={formData.name}
           onChange={e => setFormData({...formData, name: e.target.value})}
         />
       </div>
@@ -62,7 +70,7 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
         <Label htmlFor="description">Beschreibung</Label>
         <Textarea
           id="description"
-          value={formData.description || ''}
+          value={formData.description}
           onChange={e => setFormData({...formData, description: e.target.value})}
         />
       </div>

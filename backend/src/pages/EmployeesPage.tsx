@@ -4,17 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { EmployeeForm } from "@/components/forms/EmployeeForm"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { PlusCircle, Pencil, Trash2 } from "lucide-react"
-
-interface Employee {
-  ID: number
-  first_name: string
-  last_name: string
-  email: string
-  department_id: number
-  department: {
-    name: string
-  }
-}
+import { Employee } from "@/types"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -97,14 +87,13 @@ const EmployeesPage = () => {
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(employee)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(employee.ID)}>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(employee.ID!)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
+          ))}        </TableBody>
       </Table>
     </div>
   )

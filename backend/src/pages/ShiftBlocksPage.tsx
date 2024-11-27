@@ -4,25 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ShiftBlockForm } from "@/components/forms/ShiftBlockForm"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { PlusCircle, Pencil, Trash2 } from "lucide-react"
-
-interface ShiftBlock {
-  ID: number
-  name: string
-  description: string
-  start_date: string
-  employee_id: number
-  employee: {
-    first_name: string
-    last_name: string
-  }
-  monday: { shift_type_id: number, shift_type: { name: string } }
-  tuesday: { shift_type_id: number, shift_type: { name: string } }
-  wednesday: { shift_type_id: number, shift_type: { name: string } }
-  thursday: { shift_type_id: number, shift_type: { name: string } }
-  friday: { shift_type_id: number, shift_type: { name: string } }
-  saturday: { shift_type_id: number, shift_type: { name: string } }
-  sunday: { shift_type_id: number, shift_type: { name: string } }
-}
+import { ShiftBlock } from "@/types"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 

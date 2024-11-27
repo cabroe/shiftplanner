@@ -15,6 +15,7 @@ interface Employee {
   last_name: string
   email: string
   department_id: number
+  department?: Department
 }
 
 interface EmployeeFormProps {
@@ -26,26 +27,30 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
   const [departments, setDepartments] = useState<Department[]>([])
-  
-  const defaultValues: Employee = {
+  const [formData, setFormData] = useState<Employee>({
     first_name: '',
     last_name: '',
     email: '',
     department_id: 0
-  }
-
-  const [formData, setFormData] = useState<Employee>(defaultValues)
+  })
 
   useEffect(() => {
-    setFormData(employee || defaultValues)
-    loadDepartments()
-  }, [employee])
+    const initializeForm = async () => {
+      // Lade Abteilungen
+      const deptResponse = await fetch(`${API_URL}/api/departments`)
+      const deptData = await deptResponse.json()
+      setDepartments(deptData.data)
 
-  const loadDepartments = async () => {
-    const response = await fetch(`${API_URL}/api/departments`)
-    const data = await response.json()
-    setDepartments(data.data)
-  }
+      // Wenn ein Mitarbeiter bearbeitet wird, lade die vollständigen Daten
+      if (employee?.ID) {
+        const empResponse = await fetch(`${API_URL}/api/employees/${employee.ID}`)
+        const empData = await empResponse.json()
+        setFormData(empData.data)
+      }
+    }
+    
+    initializeForm()
+  }, [employee])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,15 +59,17 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
       ? `${API_URL}/api/employees/${employee.ID}`
       : `${API_URL}/api/employees`
     
-    await fetch(url, {
+    const response = await fetch(url, {
       method: employee?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData)
     })
-    
-    onSubmit()
+
+    if (response.ok) {
+      onSubmit()
+    }
   }
 
   return (
@@ -71,7 +78,7 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
         <Label htmlFor="first_name">Vorname</Label>
         <Input
           id="first_name"
-          value={formData.first_name || ''}
+          value={formData.first_name}
           onChange={e => setFormData({...formData, first_name: e.target.value})}
         />
       </div>
@@ -80,7 +87,7 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
         <Label htmlFor="last_name">Nachname</Label>
         <Input
           id="last_name"
-          value={formData.last_name || ''}
+          value={formData.last_name}
           onChange={e => setFormData({...formData, last_name: e.target.value})}
         />
       </div>
@@ -90,7 +97,7 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
         <Input
           id="email"
           type="email"
-          value={formData.email || ''}
+          value={formData.email}
           onChange={e => setFormData({...formData, email: e.target.value})}
         />
       </div>
@@ -98,11 +105,20 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
       <div className="grid w-full gap-2">
         <Label htmlFor="department">Abteilung</Label>
         <Select 
-          value={formData.department_id?.toString() || '0'}
-          onValueChange={value => setFormData({...formData, department_id: parseInt(value)})}
+          value={formData.department_id?.toString()}
+          onValueChange={value => {
+            const selectedDepartment = departments.find(dept => dept.ID.toString() === value)
+            setFormData({
+              ...formData, 
+              department_id: parseInt(value),
+              department: selectedDepartment
+            })
+          }}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Abteilung auswählen" />
+            <SelectValue>
+              {formData.department?.name || "Abteilung auswählen"}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {departments.map(dept => (

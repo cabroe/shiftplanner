@@ -24,17 +24,20 @@ const ShiftTypesPage = () => {
     loadShiftTypes()
   }, [])
 
-  const loadShiftTypes = () => {
-    fetch(`${API_URL}/api/shifttypes`)
-      .then(res => res.json())
-      .then(response => setShiftTypes(response.data))
+  const loadShiftTypes = async () => {
+    const response = await fetch(`${API_URL}/api/shifttypes`)
+    const data = await response.json()
+    setShiftTypes(data.data)
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Schichttyp wirklich löschen?')) {
-      fetch(`${API_URL}/api/shifttypes/${id}`, {
+      const response = await fetch(`${API_URL}/api/shifttypes/${id}`, {
         method: 'DELETE'
-      }).then(() => loadShiftTypes())
+      })
+      if (response.ok) {
+        loadShiftTypes()
+      }
     }
   }
 
@@ -89,8 +92,8 @@ const ShiftTypesPage = () => {
             <TableRow key={shiftType.ID}>
               <TableCell>{shiftType.name}</TableCell>
               <TableCell>{shiftType.description}</TableCell>
-              <TableCell>{shiftType.start_time}</TableCell>
-              <TableCell>{shiftType.end_time}</TableCell>
+              <TableCell>{shiftType.start_time} Uhr</TableCell>
+              <TableCell>{shiftType.end_time} Uhr</TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(shiftType)}>
