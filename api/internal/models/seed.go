@@ -1,10 +1,24 @@
 package models
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 func SeedDatabase(db *gorm.DB) {
+	// Admin erstellen
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+	admin := Admin{
+		Username:    "admin",
+		Password:    string(hashedPassword),
+		Email:       "admin@example.com",
+		FirstName:   "Admin",
+		LastName:    "User",
+		IsActive:    true,
+		IsSuperUser: true,
+	}
+	db.Create(&admin)
+
 	// Departments erstellen
 	itDepartment := Department{
 		Name:        "IT",

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"shift-planner/api/internal/handlers"
 	"shift-planner/api/internal/models"
+	"shift-planner/api/internal/routes"
 	"syscall"
 	"time"
 
@@ -51,14 +51,16 @@ func main() {
 	db.Migrator().DropTable(&models.Employee{})
 	db.Migrator().DropTable(&models.ShiftType{})
 	db.Migrator().DropTable(&models.Department{})
+	db.Migrator().DropTable(&models.Admin{})
 	log.Printf("Datenbank-Reset erfolgreich")
 
 	// Auto-Migration in korrekter Reihenfolge
-	db.AutoMigrate(&models.Department{}) // Erst Department
-	db.AutoMigrate(&models.Employee{})   // Dann Employee
+	db.AutoMigrate(&models.Admin{})
+	db.AutoMigrate(&models.Department{})
+	db.AutoMigrate(&models.Employee{})
 	db.AutoMigrate(&models.ShiftType{})
-	db.AutoMigrate(&models.Shift{})      // Dann Shifts
-	db.AutoMigrate(&models.ShiftBlock{}) // Zuletzt ShiftBlocks
+	db.AutoMigrate(&models.Shift{})
+	db.AutoMigrate(&models.ShiftBlock{})
 	log.Printf("Datenbank-Migration erfolgreich")
 
 	models.SeedDatabase(db)
@@ -67,51 +69,12 @@ func main() {
 	// Router initialisieren
 	router := mux.NewRouter()
 
-	// Handler definieren
-	shiftHandler := handlers.NewShiftHandler(db)
-	employeeHandler := handlers.NewEmployeeHandler(db)
-	shiftTypeHandler := handlers.NewShiftTypeHandler(db)
-	shiftBlockHandler := handlers.NewShiftBlockHandler(db)
-	departmentHandler := handlers.NewDepartmentHandler(db)
-
-	// ShiftType Routen
-	router.HandleFunc("/api/shifts", shiftHandler.GetShifts).Methods("GET")
-	router.HandleFunc("/api/shifts", shiftHandler.CreateShift).Methods("POST")
-	router.HandleFunc("/api/shifts/{id}", shiftHandler.GetShift).Methods("GET")
-	router.HandleFunc("/api/shifts/{id}", shiftHandler.UpdateShift).Methods("PUT")
-	router.HandleFunc("/api/shifts/{id}", shiftHandler.DeleteShift).Methods("DELETE")
-
-	// Employee Routen
-	router.HandleFunc("/api/employees", employeeHandler.GetEmployees).Methods("GET")
-	router.HandleFunc("/api/employees", employeeHandler.CreateEmployee).Methods("POST")
-	router.HandleFunc("/api/employees/{id}", employeeHandler.GetEmployee).Methods("GET")
-	router.HandleFunc("/api/employees/{id}", employeeHandler.UpdateEmployee).Methods("PUT")
-	router.HandleFunc("/api/employees/{id}", employeeHandler.DeleteEmployee).Methods("DELETE")
-
-	// ShiftType Routen
-	router.HandleFunc("/api/shifttypes", shiftTypeHandler.GetShiftTypes).Methods("GET")
-	router.HandleFunc("/api/shifttypes", shiftTypeHandler.CreateShiftType).Methods("POST")
-	router.HandleFunc("/api/shifttypes/{id}", shiftTypeHandler.GetShiftType).Methods("GET")
-	router.HandleFunc("/api/shifttypes/{id}", shiftTypeHandler.UpdateShiftType).Methods("PUT")
-	router.HandleFunc("/api/shifttypes/{id}", shiftTypeHandler.DeleteShiftType).Methods("DELETE")
-
-	// ShiftBlock Routen
-	router.HandleFunc("/api/shiftblocks", shiftBlockHandler.GetShiftBlocks).Methods("GET")
-	router.HandleFunc("/api/shiftblocks", shiftBlockHandler.CreateShiftBlock).Methods("POST")
-	router.HandleFunc("/api/shiftblocks/{id}", shiftBlockHandler.GetShiftBlock).Methods("GET")
-	router.HandleFunc("/api/shiftblocks/{id}", shiftBlockHandler.UpdateShiftBlock).Methods("PUT")
-	router.HandleFunc("/api/shiftblocks/{id}", shiftBlockHandler.DeleteShiftBlock).Methods("DELETE")
-
-	// Department Routen
-	router.HandleFunc("/api/departments", departmentHandler.GetDepartments).Methods("GET")
-	router.HandleFunc("/api/departments", departmentHandler.CreateDepartment).Methods("POST")
-	router.HandleFunc("/api/departments/{id}", departmentHandler.GetDepartment).Methods("GET")
-	router.HandleFunc("/api/departments/{id}", departmentHandler.UpdateDepartment).Methods("PUT")
-	router.HandleFunc("/api/departments/{id}", departmentHandler.DeleteDepartment).Methods("DELETE")
+	// Routes setup
+	routes.SetupRoutes(router, db)
 
 	// CORS Konfiguration
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // Erlaube Zugriff von React Frontend
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
@@ -119,10 +82,6 @@ func main() {
 
 	// Handler mit CORS wrappen
 	handler := c.Handler(router)
-
-	// Kontext für Graceful Shutdown
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
 
 	// Server mit Timeout-Einstellungen
 	server := &http.Server{
@@ -133,7 +92,7 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Server in Goroutine starten
+	// Graceful Shutdown
 	go func() {
 		log.Println("Server startet auf Port 8080...")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -142,14 +101,15 @@ func main() {
 	}()
 
 	// Auf Shutdown-Signal warten
-	<-ctx.Done()
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 	log.Println("Server wird heruntergefahren...")
 
-	// Kontextzeit für Cleanup-Operationen
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	if err := server.Shutdown(shutdownCtx); err != nil {
+	if err := server.Shutdown(ctx); err != nil {
 		log.Printf("Server Shutdown-Fehler: %v", err)
 	}
 
