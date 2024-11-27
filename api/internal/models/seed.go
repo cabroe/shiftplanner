@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -67,7 +65,6 @@ func SeedDatabase(db *gorm.DB) {
 	// Beispiel-ShiftBlock erstellen
 	db.Create(&ShiftBlock{
 		Name:        "Standardwoche",
-		StartDate:   time.Now(),
 		EmployeeID:  maxMustermann.ID,
 		Description: "Normale Arbeitswoche",
 		Monday:      ShiftDay{ShiftTypeID: früh.ID},

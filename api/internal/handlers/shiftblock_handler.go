@@ -20,7 +20,8 @@ func NewShiftBlockHandler(db *gorm.DB) *ShiftBlockHandler {
 
 func (h *ShiftBlockHandler) GetShiftBlocks(w http.ResponseWriter, r *http.Request) {
 	var shiftBlocks []models.ShiftBlock
-	result := h.db.Preload("Monday.ShiftType").
+	result := h.db.Preload("Employee").
+		Preload("Monday.ShiftType").
 		Preload("Tuesday.ShiftType").
 		Preload("Wednesday.ShiftType").
 		Preload("Thursday.ShiftType").
@@ -81,7 +82,8 @@ func (h *ShiftBlockHandler) CreateShiftBlock(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	h.db.Preload("Monday.ShiftType").
+	h.db.Preload("Employee").
+		Preload("Monday.ShiftType").
 		Preload("Tuesday.ShiftType").
 		Preload("Wednesday.ShiftType").
 		Preload("Thursday.ShiftType").
@@ -104,7 +106,8 @@ func (h *ShiftBlockHandler) GetShiftBlock(w http.ResponseWriter, r *http.Request
 	params := mux.Vars(r)
 	var shiftBlock models.ShiftBlock
 
-	result := h.db.Preload("Monday.ShiftType").
+	result := h.db.Preload("Employee").
+		Preload("Monday.ShiftType").
 		Preload("Tuesday.ShiftType").
 		Preload("Wednesday.ShiftType").
 		Preload("Thursday.ShiftType").
@@ -168,7 +171,8 @@ func (h *ShiftBlockHandler) UpdateShiftBlock(w http.ResponseWriter, r *http.Requ
 
 	h.db.Save(&shiftBlock)
 
-	h.db.Preload("Monday.ShiftType").
+	h.db.Preload("Employee").
+		Preload("Monday.ShiftType").
 		Preload("Tuesday.ShiftType").
 		Preload("Wednesday.ShiftType").
 		Preload("Thursday.ShiftType").

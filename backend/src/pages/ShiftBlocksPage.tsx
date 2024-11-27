@@ -71,8 +71,8 @@ const ShiftBlocksPage = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Beschreibung</TableHead>
             <TableHead>Mitarbeiter</TableHead>
-            <TableHead>Startdatum</TableHead>
             <TableHead>Mo</TableHead>
             <TableHead>Di</TableHead>
             <TableHead>Mi</TableHead>
@@ -87,8 +87,8 @@ const ShiftBlocksPage = () => {
           {shiftBlocks.map(block => (
             <TableRow key={block.ID}>
               <TableCell>{block.name}</TableCell>
+              <TableCell>{block.description}</TableCell>
               <TableCell>{block.employee?.first_name} {block.employee?.last_name}</TableCell>
-              <TableCell>{new Date(block.start_date).toLocaleDateString()}</TableCell>
               <TableCell>{block.monday?.shift_type?.name}</TableCell>
               <TableCell>{block.tuesday?.shift_type?.name}</TableCell>
               <TableCell>{block.wednesday?.shift_type?.name}</TableCell>

@@ -19,7 +19,6 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
     ID: 0,
     name: '',
     description: '',
-    start_date: '',
     employee_id: 0,
     employee: {
       ID: 0,
@@ -111,16 +110,6 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
           id="description"
           value={formData.description}
           onChange={e => setFormData({...formData, description: e.target.value})}
-        />
-      </div>
-
-      <div className="grid w-full gap-2">
-        <Label htmlFor="start_date">Startdatum</Label>
-        <Input
-          id="start_date"
-          type="date"
-          value={formData.start_date?.split('T')[0]}
-          onChange={e => setFormData({...formData, start_date: e.target.value})}
         />
       </div>
 
