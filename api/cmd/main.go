@@ -51,6 +51,7 @@ func main() {
 	db.Migrator().DropTable(&models.Employee{})
 	db.Migrator().DropTable(&models.ShiftType{})
 	db.Migrator().DropTable(&models.Department{})
+	log.Printf("Datenbank-Reset erfolgreich")
 
 	// Auto-Migration in korrekter Reihenfolge
 	db.AutoMigrate(&models.Department{}) // Erst Department
@@ -58,6 +59,10 @@ func main() {
 	db.AutoMigrate(&models.ShiftType{})
 	db.AutoMigrate(&models.Shift{})      // Dann Shifts
 	db.AutoMigrate(&models.ShiftBlock{}) // Zuletzt ShiftBlocks
+	log.Printf("Datenbank-Migration erfolgreich")
+
+	models.SeedDatabase(db)
+	log.Printf("Datenbank erfolgreich mit Standardwerten befüllt")
 
 	// Router initialisieren
 	router := mux.NewRouter()
