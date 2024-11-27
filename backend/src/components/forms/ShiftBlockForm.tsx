@@ -12,6 +12,16 @@ interface ShiftBlockFormProps {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
+const WEEKDAYS = [
+  { key: 'monday', label: 'Montag' },
+  { key: 'tuesday', label: 'Dienstag' },
+  { key: 'wednesday', label: 'Mittwoch' },
+  { key: 'thursday', label: 'Donnerstag' },
+  { key: 'friday', label: 'Freitag' },
+  { key: 'saturday', label: 'Samstag' },
+  { key: 'sunday', label: 'Sonntag' }
+]
+
 export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [shiftTypes, setShiftTypes] = useState<ShiftType[]>([])
@@ -19,21 +29,24 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
     ID: 0,
     name: '',
     description: '',
+    start_date: '',
+    color: '#000000',
     employee_id: 0,
     employee: {
       ID: 0,
       first_name: '',
       last_name: '',
       email: '',
-      department_id: 0
+      department_id: 0,
+      color: ''
     },
-    monday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
-    tuesday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
-    wednesday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
-    thursday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
-    friday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
-    saturday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } },
-    sunday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '' } }
+    monday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } },
+    tuesday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } },
+    wednesday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } },
+    thursday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } },
+    friday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } },
+    saturday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } },
+    sunday: { shift_type_id: 0, shift_type: { ID: 0, name: '', start_time: '', end_time: '', color: '' } }
   })
 
   useEffect(() => {
@@ -115,7 +128,29 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       </div>
 
       <div className="grid w-full gap-2">
-        <Label htmlFor="employee">Mitarbeiter</Label>
+        <Label htmlFor="start_date">Startdatum *</Label>
+        <Input
+          id="start_date"
+          type="date"
+          value={formData.start_date?.split('T')[0]}
+          onChange={e => setFormData({...formData, start_date: e.target.value})}
+          required
+        />
+      </div>
+
+      <div className="grid w-full gap-2">
+        <Label htmlFor="color">Farbe *</Label>
+        <Input
+          id="color"
+          type="color"
+          value={formData.color}
+          onChange={e => setFormData({...formData, color: e.target.value})}
+          required
+        />
+      </div>
+
+      <div className="grid w-full gap-2">
+        <Label htmlFor="employee">Mitarbeiter *</Label>
         <Select 
           value={formData.employee_id?.toString()}
           onValueChange={value => {
@@ -128,6 +163,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
               })
             }
           }}
+          required
         >
           <SelectTrigger>
             <SelectValue>
@@ -147,41 +183,38 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         </Select>
       </div>
 
-      {['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'].map((day, index) => {
-        const dayKey = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][index]
-        return (
-          <div key={dayKey} className="grid w-full gap-2">
-            <Label htmlFor={dayKey}>{day} *</Label>
-            <Select 
-              value={(formData[dayKey as keyof typeof formData] as { shift_type_id: number })?.shift_type_id?.toString()}
-              onValueChange={value => {
-                const selectedShiftType = shiftTypes.find(type => type.ID.toString() === value)
-                setFormData({
-                  ...formData,
-                  [dayKey]: { 
-                    shift_type_id: parseInt(value),
-                    shift_type: selectedShiftType
-                  }
-                })
-              }}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue>
-                  {(formData[dayKey as keyof typeof formData] as any)?.shift_type?.name || "Schichttyp auswählen"}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {shiftTypes.map(type => (
-                  <SelectItem key={type.ID} value={type.ID.toString()}>
-                    {type.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )
-      })}
+      {WEEKDAYS.map(({ key, label }) => (
+        <div key={key} className="grid w-full gap-2">
+          <Label htmlFor={key}>{label} *</Label>
+          <Select 
+            value={(formData[key as keyof typeof formData] as { shift_type_id: number })?.shift_type_id?.toString()}
+            onValueChange={value => {
+              const selectedShiftType = shiftTypes.find(type => type.ID.toString() === value)
+              setFormData({
+                ...formData,
+                [key]: { 
+                  shift_type_id: parseInt(value),
+                  shift_type: selectedShiftType
+                }
+              })
+            }}
+            required
+          >
+            <SelectTrigger>
+              <SelectValue>
+                {(formData[key as keyof typeof formData] as any)?.shift_type?.name || "Schichttyp auswählen"}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {shiftTypes.map(type => (
+                <SelectItem key={type.ID} value={type.ID.toString()}>
+                  {type.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      ))}
 
       <Button type="submit" className="w-full">
         {shiftBlock?.ID ? 'Aktualisieren' : 'Erstellen'}

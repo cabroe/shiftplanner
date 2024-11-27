@@ -5,6 +5,8 @@ export interface ShiftBlock {
   ID: number
   name: string
   description: string
+  start_date: string
+  color: string
   employee_id: number
   employee: Employee
   monday: { shift_type_id: number, shift_type: ShiftType }

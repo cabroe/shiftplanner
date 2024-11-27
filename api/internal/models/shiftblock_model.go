@@ -10,6 +10,7 @@ type ShiftBlock struct {
 	EmployeeID  uint     `json:"employee_id"`
 	Employee    Employee `json:"employee"`
 	Description string   `json:"description"`
+	Color       string   `json:"color"`
 	Monday      ShiftDay `json:"monday" gorm:"embedded;embedded_prefix:monday_"`
 	Tuesday     ShiftDay `json:"tuesday" gorm:"embedded;embedded_prefix:tuesday_"`
 	Wednesday   ShiftDay `json:"wednesday" gorm:"embedded;embedded_prefix:wednesday_"`

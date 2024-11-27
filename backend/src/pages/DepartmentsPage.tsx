@@ -4,13 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DepartmentForm } from "@/components/forms/DepartmentForm"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { PlusCircle, Pencil, Trash2 } from "lucide-react"
-
-interface Department {
-  ID: number
-  name: string
-  description: string
-  employees: any[]
-}
+import { Department } from "@/types"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -79,6 +73,7 @@ const DepartmentsPage = () => {
             <TableHead>Name</TableHead>
             <TableHead>Beschreibung</TableHead>
             <TableHead>Mitarbeiter</TableHead>
+            <TableHead>Farbe</TableHead>
             <TableHead className="w-[100px]">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
@@ -88,6 +83,12 @@ const DepartmentsPage = () => {
               <TableCell>{department.name}</TableCell>
               <TableCell>{department.description}</TableCell>
               <TableCell>{department.employees?.length || 0}</TableCell>
+              <TableCell>
+                <div 
+                  className="w-6 h-6 rounded-full" 
+                  style={{ backgroundColor: department.color }}
+                />
+              </TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(department)}>

@@ -73,6 +73,7 @@ const EmployeesPage = () => {
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Abteilung</TableHead>
+            <TableHead>Farbe</TableHead>
             <TableHead className="w-[100px]">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
@@ -83,17 +84,24 @@ const EmployeesPage = () => {
               <TableCell>{employee.email}</TableCell>
               <TableCell>{employee.department?.name}</TableCell>
               <TableCell>
+                <div 
+                  className="w-6 h-6 rounded-full" 
+                  style={{ backgroundColor: employee.color }}
+                />
+              </TableCell>
+              <TableCell>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(employee)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(employee.ID!)}>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(employee.ID)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </TableCell>
             </TableRow>
-          ))}        </TableBody>
+          ))}
+        </TableBody>
       </Table>
     </div>
   )

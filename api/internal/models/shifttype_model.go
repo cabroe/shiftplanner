@@ -8,5 +8,6 @@ type ShiftType struct {
 	Description string  `json:"description"`
 	StartTime   string  `json:"start_time"`
 	EndTime     string  `json:"end_time"`
+	Color       string  `json:"color"`
 	Shifts      []Shift `json:"shifts"`
 }

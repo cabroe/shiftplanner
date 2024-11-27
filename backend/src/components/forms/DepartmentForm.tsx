@@ -16,8 +16,9 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
   const [formData, setFormData] = useState<Department>({
     ID: 0,
     name: '',
-    description: ''
-  })  
+    description: '',
+    color: '#000000'
+  })
 
   useEffect(() => {
     const initializeForm = async () => {
@@ -69,6 +70,17 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
           id="description"
           value={formData.description}
           onChange={e => setFormData({...formData, description: e.target.value})}
+        />
+      </div>
+
+      <div className="grid w-full gap-2">
+        <Label htmlFor="color">Farbe *</Label>
+        <Input
+          id="color"
+          type="color"
+          value={formData.color}
+          onChange={e => setFormData({...formData, color: e.target.value})}
+          required
         />
       </div>
 

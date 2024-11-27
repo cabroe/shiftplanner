@@ -20,19 +20,7 @@ const ShiftBlocksPage = () => {
   const loadShiftBlocks = () => {
     fetch(`${API_URL}/api/shiftblocks`)
       .then(res => res.json())
-      .then(response => {
-        const blocksWithEmployees = response.data.map((block: ShiftBlock) => ({
-          ...block,
-          employee: block.employee || {
-            ID: 0,
-            first_name: '',
-            last_name: '',
-            email: '',
-            department_id: 0
-          }
-        }))
-        setShiftBlocks(blocksWithEmployees)
-      })
+      .then(response => setShiftBlocks(response.data))
   }
 
   const handleDelete = (id: number) => {
@@ -85,6 +73,7 @@ const ShiftBlocksPage = () => {
             <TableHead>Name</TableHead>
             <TableHead>Beschreibung</TableHead>
             <TableHead>Mitarbeiter</TableHead>
+            <TableHead>Startdatum</TableHead>
             <TableHead>Mo</TableHead>
             <TableHead>Di</TableHead>
             <TableHead>Mi</TableHead>
@@ -92,6 +81,7 @@ const ShiftBlocksPage = () => {
             <TableHead>Fr</TableHead>
             <TableHead>Sa</TableHead>
             <TableHead>So</TableHead>
+            <TableHead>Farbe</TableHead>
             <TableHead className="w-[100px]">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
@@ -100,9 +90,8 @@ const ShiftBlocksPage = () => {
             <TableRow key={block.ID}>
               <TableCell>{block.name}</TableCell>
               <TableCell>{block.description}</TableCell>
-              <TableCell>
-                {block.employee ? `${block.employee.first_name} ${block.employee.last_name}` : '-'}
-              </TableCell>
+              <TableCell>{block.employee?.first_name} {block.employee?.last_name}</TableCell>
+              <TableCell>{new Date(block.start_date).toLocaleDateString()}</TableCell>
               <TableCell>{block.monday?.shift_type?.name}</TableCell>
               <TableCell>{block.tuesday?.shift_type?.name}</TableCell>
               <TableCell>{block.wednesday?.shift_type?.name}</TableCell>
@@ -110,6 +99,12 @@ const ShiftBlocksPage = () => {
               <TableCell>{block.friday?.shift_type?.name}</TableCell>
               <TableCell>{block.saturday?.shift_type?.name}</TableCell>
               <TableCell>{block.sunday?.shift_type?.name}</TableCell>
+              <TableCell>
+                <div 
+                  className="w-6 h-6 rounded-full" 
+                  style={{ backgroundColor: block.color }}
+                />
+              </TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(block)}>

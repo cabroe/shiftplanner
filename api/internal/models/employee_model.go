@@ -10,6 +10,7 @@ type Employee struct {
 	LastName     string     `json:"last_name"`
 	Email        string     `json:"email" gorm:"unique"`
 	Password     string     `json:"password"`
+	Color        string     `json:"color"`
 	DepartmentID uint       `json:"department_id"`
 	Department   Department `json:"department"`
 	Shifts       []Shift    `json:"shifts"`

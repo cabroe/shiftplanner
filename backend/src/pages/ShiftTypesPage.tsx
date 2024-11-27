@@ -4,14 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ShiftTypeForm } from "@/components/forms/ShiftTypeForm"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { PlusCircle, Pencil, Trash2 } from "lucide-react"
-
-interface ShiftType {
-  ID: number
-  name: string
-  description: string
-  start_time: string
-  end_time: string
-}
+import { ShiftType } from "@/types"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -24,25 +17,22 @@ const ShiftTypesPage = () => {
     loadShiftTypes()
   }, [])
 
-  const loadShiftTypes = async () => {
-    const response = await fetch(`${API_URL}/api/shifttypes`)
-    const data = await response.json()
-    setShiftTypes(data.data)
+  const loadShiftTypes = () => {
+    fetch(`${API_URL}/api/shifttypes`)
+      .then(res => res.json())
+      .then(response => setShiftTypes(response.data))
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = (id: number) => {
     if (confirm('Schichttyp wirklich löschen?')) {
-      const response = await fetch(`${API_URL}/api/shifttypes/${id}`, {
+      fetch(`${API_URL}/api/shifttypes/${id}`, {
         method: 'DELETE'
-      })
-      if (response.ok) {
-        loadShiftTypes()
-      }
+      }).then(() => loadShiftTypes())
     }
   }
 
   const handleEdit = (shiftType: ShiftType) => {
-    setSelectedShiftType({...shiftType})
+    setSelectedShiftType(shiftType)
     setIsDialogOpen(true)
   }
 
@@ -84,6 +74,7 @@ const ShiftTypesPage = () => {
             <TableHead>Beschreibung</TableHead>
             <TableHead>Startzeit</TableHead>
             <TableHead>Endzeit</TableHead>
+            <TableHead>Farbe</TableHead>
             <TableHead className="w-[100px]">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
@@ -94,6 +85,12 @@ const ShiftTypesPage = () => {
               <TableCell>{shiftType.description}</TableCell>
               <TableCell>{shiftType.start_time} Uhr</TableCell>
               <TableCell>{shiftType.end_time} Uhr</TableCell>
+              <TableCell>
+                <div 
+                  className="w-6 h-6 rounded-full" 
+                  style={{ backgroundColor: shiftType.color }}
+                />
+              </TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={() => handleEdit(shiftType)}>

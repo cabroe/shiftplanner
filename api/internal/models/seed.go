@@ -29,12 +29,14 @@ func SeedDatabase(db *gorm.DB) {
 	itDepartment := Department{
 		Name:        "IT",
 		Description: "Informationstechnologie Abteilung",
+		Color:       "#2563eb", // Blau
 	}
 	db.Create(&itDepartment)
 
 	hrDepartment := Department{
 		Name:        "HR",
 		Description: "Human Resources Abteilung",
+		Color:       "#16a34a", // Grün
 	}
 	db.Create(&hrDepartment)
 
@@ -44,6 +46,7 @@ func SeedDatabase(db *gorm.DB) {
 		Description: "Frühschicht",
 		StartTime:   "06:00",
 		EndTime:     "14:00",
+		Color:       "#0ea5e9", // Hellblau
 	}
 	db.Create(&früh)
 
@@ -52,6 +55,7 @@ func SeedDatabase(db *gorm.DB) {
 		Description: "Spätschicht",
 		StartTime:   "14:00",
 		EndTime:     "22:00",
+		Color:       "#6366f1", // Indigo
 	}
 	db.Create(&spät)
 
@@ -60,6 +64,7 @@ func SeedDatabase(db *gorm.DB) {
 		Description: "Nachtschicht",
 		StartTime:   "22:00",
 		EndTime:     "06:00",
+		Color:       "#8b5cf6", // Violett
 	}
 	db.Create(&nacht)
 
@@ -70,6 +75,7 @@ func SeedDatabase(db *gorm.DB) {
 		Email:        "max@example.com",
 		Password:     "password123",
 		DepartmentID: itDepartment.ID,
+		Color:        "#f59e0b", // Orange
 	}
 	db.Create(&maxMustermann)
 
@@ -79,6 +85,7 @@ func SeedDatabase(db *gorm.DB) {
 		Email:        "erika@example.com",
 		Password:     "password123",
 		DepartmentID: hrDepartment.ID,
+		Color:        "#ec4899", // Pink
 	}
 	db.Create(&erikaMusterfrau)
 
@@ -87,6 +94,7 @@ func SeedDatabase(db *gorm.DB) {
 		Name:        "Standardwoche",
 		EmployeeID:  maxMustermann.ID,
 		Description: "Normale Arbeitswoche",
+		Color:       "#14b8a6", // Türkis
 		Monday:      ShiftDay{ShiftTypeID: früh.ID},
 		Tuesday:     ShiftDay{ShiftTypeID: früh.ID},
 		Wednesday:   ShiftDay{ShiftTypeID: spät.ID},

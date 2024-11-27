@@ -3,20 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-interface Department {
-  ID: number
-  name: string
-}
-
-interface Employee {
-  ID?: number
-  first_name: string
-  last_name: string
-  email: string
-  department_id: number
-  department?: Department
-}
+import { Employee, Department } from "@/types"
 
 interface EmployeeFormProps {
   employee?: Employee | null
@@ -32,17 +19,16 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
     first_name: '',
     last_name: '',
     email: '',
-    department_id: 0
+    department_id: 0,
+    color: '#000000'
   })
 
   useEffect(() => {
     const initializeForm = async () => {
-      // Lade Abteilungen
       const deptResponse = await fetch(`${API_URL}/api/departments`)
       const deptData = await deptResponse.json()
       setDepartments(deptData.data)
 
-      // Wenn ein Mitarbeiter bearbeitet wird, lade die vollständigen Daten
       if (employee?.ID) {
         const empResponse = await fetch(`${API_URL}/api/employees/${employee.ID}`)
         const empData = await empResponse.json()
@@ -95,7 +81,6 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
         />
       </div>
 
-
       <div className="grid w-full gap-2">
         <Label htmlFor="email">Email *</Label>
         <Input
@@ -121,24 +106,35 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
           }}
           required
         >
-        <SelectTrigger>
-          <SelectValue>
-            {formData.department?.name || "Abteilung auswählen"}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {departments.map(dept => (
-            <SelectItem key={dept.ID} value={dept.ID.toString()}>
-              {dept.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+          <SelectTrigger>
+            <SelectValue>
+              {formData.department?.name || "Abteilung auswählen"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {departments.map(dept => (
+              <SelectItem key={dept.ID} value={dept.ID.toString()}>
+                {dept.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-    <Button type="submit" className="w-full">
-      {employee?.ID ? 'Aktualisieren' : 'Erstellen'}
-    </Button>
+      <div className="grid w-full gap-2">
+        <Label htmlFor="color">Farbe *</Label>
+        <Input
+          id="color"
+          type="color"
+          value={formData.color}
+          onChange={e => setFormData({...formData, color: e.target.value})}
+          required
+        />
+      </div>
+
+      <Button type="submit" className="w-full">
+        {employee?.ID ? 'Aktualisieren' : 'Erstellen'}
+      </Button>
     </form>
   )
 }

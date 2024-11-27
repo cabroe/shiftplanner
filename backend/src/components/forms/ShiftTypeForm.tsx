@@ -4,14 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-interface ShiftType {
-  ID?: number
-  name: string
-  description: string
-  start_time: string
-  end_time: string
-}
+import { ShiftType } from "@/types"
 
 interface ShiftTypeFormProps {
   shiftType?: ShiftType | null
@@ -32,16 +25,24 @@ const getTimeOptions = () => {
 
 export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
   const [formData, setFormData] = useState<ShiftType>({
+    ID: 0,
     name: '',
     description: '',
     start_time: '',
-    end_time: ''
+    end_time: '',
+    color: '#000000'
   })
 
   useEffect(() => {
-    if (shiftType) {
-      setFormData(shiftType)
+    const initializeForm = async () => {
+      if (shiftType?.ID) {
+        const response = await fetch(`${API_URL}/api/shifttypes/${shiftType.ID}`)
+        const data = await response.json()
+        setFormData(data.data)
+      }
     }
+    
+    initializeForm()
   }, [shiftType])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -123,6 +124,17 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className="grid w-full gap-2">
+        <Label htmlFor="color">Farbe *</Label>
+        <Input
+          id="color"
+          type="color"
+          value={formData.color}
+          onChange={e => setFormData({...formData, color: e.target.value})}
+          required
+        />
       </div>
 
       <Button type="submit" className="w-full">
