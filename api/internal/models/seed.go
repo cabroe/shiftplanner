@@ -23,19 +23,25 @@ func SeedDatabase(db *gorm.DB) {
 	// ShiftTypes erstellen
 	früh := ShiftType{
 		Name:        "Früh",
-		Description: "Frühschicht 6:00-14:00",
+		Description: "Frühschicht",
+		StartTime:   "06:00",
+		EndTime:     "14:00",
 	}
 	db.Create(&früh)
 
 	spät := ShiftType{
 		Name:        "Spät",
-		Description: "Spätschicht 14:00-22:00",
+		Description: "Spätschicht",
+		StartTime:   "14:00",
+		EndTime:     "22:00",
 	}
 	db.Create(&spät)
 
 	nacht := ShiftType{
 		Name:        "Nacht",
-		Description: "Nachtschicht 22:00-6:00",
+		Description: "Nachtschicht",
+		StartTime:   "22:00",
+		EndTime:     "06:00",
 	}
 	db.Create(&nacht)
 
@@ -57,15 +63,6 @@ func SeedDatabase(db *gorm.DB) {
 		DepartmentID: hrDepartment.ID,
 	}
 	db.Create(&erikaMusterfrau)
-
-	// Beispiel-Shifts erstellen
-	db.Create(&Shift{
-		EmployeeID:  maxMustermann.ID,
-		ShiftTypeID: früh.ID,
-		StartTime:   time.Now(),
-		EndTime:     time.Now().Add(8 * time.Hour),
-		Description: "Reguläre Frühschicht",
-	})
 
 	// Beispiel-ShiftBlock erstellen
 	db.Create(&ShiftBlock{
