@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"shift-planner/api/internal/handlers"
 	"shift-planner/api/internal/models"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -72,7 +76,7 @@ func main() {
 	router.HandleFunc("/api/shifts/{id}", shiftHandler.UpdateShift).Methods("PUT")
 	router.HandleFunc("/api/shifts/{id}", shiftHandler.DeleteShift).Methods("DELETE")
 
-	// ShiftBlock Routen
+	// Employee Routen
 	router.HandleFunc("/api/employees", employeeHandler.GetEmployees).Methods("GET")
 	router.HandleFunc("/api/employees", employeeHandler.CreateEmployee).Methods("POST")
 	router.HandleFunc("/api/employees/{id}", employeeHandler.GetEmployee).Methods("GET")
@@ -100,6 +104,49 @@ func main() {
 	router.HandleFunc("/api/departments/{id}", departmentHandler.UpdateDepartment).Methods("PUT")
 	router.HandleFunc("/api/departments/{id}", departmentHandler.DeleteDepartment).Methods("DELETE")
 
-	log.Println("Server startet auf Port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	// CORS Konfiguration
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // Erlaube Zugriff von React Frontend
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	})
+
+	// Handler mit CORS wrappen
+	handler := c.Handler(router)
+
+	// Kontext für Graceful Shutdown
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	// Server mit Timeout-Einstellungen
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      handler,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	// Server in Goroutine starten
+	go func() {
+		log.Println("Server startet auf Port 8080...")
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server-Fehler: %v", err)
+		}
+	}()
+
+	// Auf Shutdown-Signal warten
+	<-ctx.Done()
+	log.Println("Server wird heruntergefahren...")
+
+	// Kontextzeit für Cleanup-Operationen
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		log.Printf("Server Shutdown-Fehler: %v", err)
+	}
+
+	log.Println("Server wurde sauber beendet")
 }
