@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Department } from "@/types"
+import { getColorOptions } from "@/lib/colors"
 
 interface DepartmentFormProps {
   department?: Department | null
@@ -17,7 +19,7 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
     ID: 0,
     name: '',
     description: '',
-    color: '#000000'
+    color: getColorOptions()[0].value
   })
 
   useEffect(() => {
@@ -75,13 +77,36 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
 
       <div className="grid w-full gap-2">
         <Label htmlFor="color">Farbe *</Label>
-        <Input
-          id="color"
-          type="color"
+        <Select
           value={formData.color}
-          onChange={e => setFormData({...formData, color: e.target.value})}
+          onValueChange={value => setFormData({...formData, color: value})}
           required
-        />
+        >
+          <SelectTrigger>
+            <SelectValue>
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-4 h-4 rounded-full" 
+                  style={{ backgroundColor: formData.color }}
+                />
+                {getColorOptions().find(c => c.value === formData.color)?.label || "Farbe wählen"}
+              </div>
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {getColorOptions().map(color => (
+              <SelectItem key={color.value} value={color.value}>
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-4 h-4 rounded-full" 
+                    style={{ backgroundColor: color.value }}
+                  />
+                  {color.label}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <Button type="submit" className="w-full">
