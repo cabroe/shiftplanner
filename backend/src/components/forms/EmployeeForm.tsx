@@ -76,35 +76,39 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid w-full gap-2">
-        <Label htmlFor="first_name">Vorname</Label>
+        <Label htmlFor="first_name">Vorname *</Label>
         <Input
           id="first_name"
           value={formData.first_name}
           onChange={e => setFormData({...formData, first_name: e.target.value})}
+          required
         />
       </div>
 
       <div className="grid w-full gap-2">
-        <Label htmlFor="last_name">Nachname</Label>
+        <Label htmlFor="last_name">Nachname *</Label>
         <Input
           id="last_name"
           value={formData.last_name}
           onChange={e => setFormData({...formData, last_name: e.target.value})}
+          required
         />
       </div>
 
+
       <div className="grid w-full gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">Email *</Label>
         <Input
           id="email"
           type="email"
           value={formData.email}
           onChange={e => setFormData({...formData, email: e.target.value})}
+          required
         />
       </div>
 
       <div className="grid w-full gap-2">
-        <Label htmlFor="department">Abteilung</Label>
+        <Label htmlFor="department">Abteilung *</Label>
         <Select 
           value={formData.department_id?.toString()}
           onValueChange={value => {
@@ -115,25 +119,26 @@ export function EmployeeForm({ employee, onSubmit }: EmployeeFormProps) {
               department: selectedDepartment
             })
           }}
+          required
         >
-          <SelectTrigger>
-            <SelectValue>
-              {formData.department?.name || "Abteilung auswählen"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {departments.map(dept => (
-              <SelectItem key={dept.ID} value={dept.ID.toString()}>
-                {dept.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+        <SelectTrigger>
+          <SelectValue>
+            {formData.department?.name || "Abteilung auswählen"}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {departments.map(dept => (
+            <SelectItem key={dept.ID} value={dept.ID.toString()}>
+              {dept.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-      <Button type="submit" className="w-full">
-        {employee?.ID ? 'Aktualisieren' : 'Erstellen'}
-      </Button>
+    <Button type="submit" className="w-full">
+      {employee?.ID ? 'Aktualisieren' : 'Erstellen'}
+    </Button>
     </form>
   )
 }

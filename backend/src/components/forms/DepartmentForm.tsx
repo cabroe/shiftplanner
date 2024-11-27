@@ -54,11 +54,12 @@ export function DepartmentForm({ department, onSubmit }: DepartmentFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid w-full gap-2">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name">Name *</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={e => setFormData({...formData, name: e.target.value})}
+          required
         />
       </div>
 

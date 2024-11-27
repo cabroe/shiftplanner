@@ -54,16 +54,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       if (shiftBlock?.ID) {
         const blockResponse = await fetch(`${API_URL}/api/shiftblocks/${shiftBlock.ID}`)
         const blockData = await blockResponse.json()
-        setFormData({
-          ...blockData.data,
-          employee: blockData.data.employee || {
-            ID: 0,
-            first_name: '',
-            last_name: '',
-            email: '',
-            department_id: 0
-          }
-        })
+        setFormData(blockData.data)
       }
     }
 
@@ -105,11 +96,12 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid w-full gap-2">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name">Name *</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={e => setFormData({...formData, name: e.target.value})}
+          required
         />
       </div>
 
@@ -155,37 +147,41 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         </Select>
       </div>
 
-      {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-        <div key={day} className="grid w-full gap-2">
-          <Label htmlFor={day}>{day.charAt(0).toUpperCase() + day.slice(1)}</Label>
-          <Select 
-            value={(formData[day as keyof typeof formData] as { shift_type_id: number })?.shift_type_id?.toString()}
-            onValueChange={value => {
-              const selectedShiftType = shiftTypes.find(type => type.ID.toString() === value)
-              setFormData({
-                ...formData,
-                [day]: { 
-                  shift_type_id: parseInt(value),
-                  shift_type: selectedShiftType
-                }
-              })
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue>
-                {(formData[day as keyof typeof formData] as any)?.shift_type?.name || "Schichttyp auswählen"}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {shiftTypes.map(type => (
-                <SelectItem key={type.ID} value={type.ID.toString()}>
-                  {type.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      ))}
+      {['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'].map((day, index) => {
+        const dayKey = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][index]
+        return (
+          <div key={dayKey} className="grid w-full gap-2">
+            <Label htmlFor={dayKey}>{day} *</Label>
+            <Select 
+              value={(formData[dayKey as keyof typeof formData] as { shift_type_id: number })?.shift_type_id?.toString()}
+              onValueChange={value => {
+                const selectedShiftType = shiftTypes.find(type => type.ID.toString() === value)
+                setFormData({
+                  ...formData,
+                  [dayKey]: { 
+                    shift_type_id: parseInt(value),
+                    shift_type: selectedShiftType
+                  }
+                })
+              }}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue>
+                  {(formData[dayKey as keyof typeof formData] as any)?.shift_type?.name || "Schichttyp auswählen"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {shiftTypes.map(type => (
+                  <SelectItem key={type.ID} value={type.ID.toString()}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )
+      })}
 
       <Button type="submit" className="w-full">
         {shiftBlock?.ID ? 'Aktualisieren' : 'Erstellen'}

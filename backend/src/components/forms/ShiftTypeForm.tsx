@@ -4,7 +4,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ShiftType } from "@/types"
+
+interface ShiftType {
+  ID?: number
+  name: string
+  description: string
+  start_time: string
+  end_time: string
+}
 
 interface ShiftTypeFormProps {
   shiftType?: ShiftType | null
@@ -25,7 +32,6 @@ const getTimeOptions = () => {
 
 export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
   const [formData, setFormData] = useState<ShiftType>({
-    ID: 0,
     name: '',
     description: '',
     start_time: '',
@@ -35,14 +41,6 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
   useEffect(() => {
     if (shiftType) {
       setFormData(shiftType)
-    } else {
-      setFormData({
-        ID: 0,
-        name: '',
-        description: '',
-        start_time: '',
-        end_time: ''
-      })
     }
   }, [shiftType])
 
@@ -69,11 +67,12 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid w-full gap-2">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name">Name *</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={e => setFormData({...formData, name: e.target.value})}
+          required
         />
       </div>
 
@@ -87,10 +86,11 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
       </div>
 
       <div className="grid w-full gap-2">
-        <Label htmlFor="start_time">Startzeit</Label>
+        <Label htmlFor="start_time">Startzeit *</Label>
         <Select
           value={formData.start_time}
           onValueChange={value => setFormData({...formData, start_time: value})}
+          required
         >
           <SelectTrigger>
             <SelectValue placeholder="Startzeit wählen" />
@@ -106,10 +106,11 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
       </div>
 
       <div className="grid w-full gap-2">
-        <Label htmlFor="end_time">Endzeit</Label>
+        <Label htmlFor="end_time">Endzeit *</Label>
         <Select
           value={formData.end_time}
           onValueChange={value => setFormData({...formData, end_time: value})}
+          required
         >
           <SelectTrigger>
             <SelectValue placeholder="Endzeit wählen" />
@@ -129,5 +130,4 @@ export function ShiftTypeForm({ shiftType, onSubmit }: ShiftTypeFormProps) {
       </Button>
     </form>
   )
-
 }
