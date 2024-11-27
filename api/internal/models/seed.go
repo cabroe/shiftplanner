@@ -6,18 +6,24 @@ import (
 )
 
 func SeedDatabase(db *gorm.DB) {
-	// Admin erstellen
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
-	admin := Admin{
-		Username:    "admin",
-		Password:    string(hashedPassword),
-		Email:       "admin@example.com",
-		FirstName:   "Admin",
-		LastName:    "User",
-		IsActive:    true,
-		IsSuperUser: true,
+	// Check if admin already exists
+	var adminCount int64
+	db.Model(&Admin{}).Count(&adminCount)
+
+	if adminCount == 0 {
+		// Admin erstellen
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		admin := Admin{
+			Username:    "admin",
+			Password:    string(hashedPassword),
+			Email:       "admin@example.com",
+			FirstName:   "Admin",
+			LastName:    "User",
+			IsActive:    true,
+			IsSuperUser: true,
+		}
+		db.Create(&admin)
 	}
-	db.Create(&admin)
 
 	// Departments erstellen
 	itDepartment := Department{

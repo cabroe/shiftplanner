@@ -2,7 +2,6 @@ package routes
 
 import (
 	"shift-planner/api/internal/handlers"
-	"shift-planner/api/internal/middleware"
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
@@ -10,22 +9,14 @@ import (
 
 func SetupRoutes(router *mux.Router, db *gorm.DB) {
 	// Handler initialisieren
-	adminHandler := handlers.NewAdminHandler(db)
 	shiftHandler := handlers.NewShiftHandler(db)
 	employeeHandler := handlers.NewEmployeeHandler(db)
 	shiftTypeHandler := handlers.NewShiftTypeHandler(db)
 	shiftBlockHandler := handlers.NewShiftBlockHandler(db)
 	departmentHandler := handlers.NewDepartmentHandler(db)
 
-	// Public routes
-	router.HandleFunc("/api/admin/login", adminHandler.Login).Methods("POST")
-
-	// Protected API routes
+	// API routes
 	api := router.PathPrefix("/api").Subrouter()
-	api.Use(middleware.AuthMiddleware)
-
-	// Admin routes
-	api.HandleFunc("/admin", adminHandler.GetAdmins).Methods("GET")
 
 	// Employee routes
 	api.HandleFunc("/employees", employeeHandler.GetEmployees).Methods("GET")

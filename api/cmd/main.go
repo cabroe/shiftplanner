@@ -51,11 +51,9 @@ func main() {
 	db.Migrator().DropTable(&models.Employee{})
 	db.Migrator().DropTable(&models.ShiftType{})
 	db.Migrator().DropTable(&models.Department{})
-	db.Migrator().DropTable(&models.Admin{})
 	log.Printf("Datenbank-Reset erfolgreich")
 
 	// Auto-Migration in korrekter Reihenfolge
-	db.AutoMigrate(&models.Admin{})
 	db.AutoMigrate(&models.Department{})
 	db.AutoMigrate(&models.Employee{})
 	db.AutoMigrate(&models.ShiftType{})
