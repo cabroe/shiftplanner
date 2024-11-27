@@ -42,7 +42,7 @@ const ShiftTypesPage = () => {
   }
 
   const handleEdit = (shiftType: ShiftType) => {
-    setSelectedShiftType(shiftType)
+    setSelectedShiftType({...shiftType})
     setIsDialogOpen(true)
   }
 

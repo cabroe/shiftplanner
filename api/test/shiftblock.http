@@ -9,7 +9,6 @@ Content-Type: application/json
 
 {
     "name": "Woche 1",
-    "start_date": "2024-01-22T00:00:00Z",
     "employee_id": 1,
     "description": "Erste Januarwoche",
     "monday": {
@@ -44,7 +43,6 @@ Content-Type: application/json
 
 {
     "name": "Woche 1 Update",
-    "start_date": "2024-01-22T00:00:00Z",
     "employee_id": 1,
     "description": "Erste Januarwoche aktualisiert",
     "monday": {

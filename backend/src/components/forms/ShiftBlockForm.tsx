@@ -54,7 +54,16 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       if (shiftBlock?.ID) {
         const blockResponse = await fetch(`${API_URL}/api/shiftblocks/${shiftBlock.ID}`)
         const blockData = await blockResponse.json()
-        setFormData(blockData.data)
+        setFormData({
+          ...blockData.data,
+          employee: blockData.data.employee || {
+            ID: 0,
+            first_name: '',
+            last_name: '',
+            email: '',
+            department_id: 0
+          }
+        })
       }
     }
 
@@ -117,7 +126,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         <Label htmlFor="employee">Mitarbeiter</Label>
         <Select 
           value={formData.employee_id?.toString()}
-          onValueChange={(value) => {
+          onValueChange={value => {
             const selectedEmployee = employees.find(emp => emp.ID.toString() === value)
             if (selectedEmployee) {
               setFormData({
@@ -130,13 +139,16 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
         >
           <SelectTrigger>
             <SelectValue>
-              {formData.employee ? `${formData.employee.first_name} ${formData.employee.last_name}` : "Mitarbeiter auswählen"}
+              {formData.employee ? 
+                `${formData.employee.first_name} ${formData.employee.last_name}` : 
+                "Mitarbeiter auswählen"
+              }
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {employees.map(emp => (
               <SelectItem key={emp.ID} value={emp.ID.toString()}>
-                {emp.first_name} {emp.last_name}
+                {`${emp.first_name} ${emp.last_name}`}
               </SelectItem>
             ))}
           </SelectContent>

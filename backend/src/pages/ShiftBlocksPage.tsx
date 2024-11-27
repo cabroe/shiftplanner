@@ -20,7 +20,19 @@ const ShiftBlocksPage = () => {
   const loadShiftBlocks = () => {
     fetch(`${API_URL}/api/shiftblocks`)
       .then(res => res.json())
-      .then(response => setShiftBlocks(response.data))
+      .then(response => {
+        const blocksWithEmployees = response.data.map((block: ShiftBlock) => ({
+          ...block,
+          employee: block.employee || {
+            ID: 0,
+            first_name: '',
+            last_name: '',
+            email: '',
+            department_id: 0
+          }
+        }))
+        setShiftBlocks(blocksWithEmployees)
+      })
   }
 
   const handleDelete = (id: number) => {
@@ -88,7 +100,9 @@ const ShiftBlocksPage = () => {
             <TableRow key={block.ID}>
               <TableCell>{block.name}</TableCell>
               <TableCell>{block.description}</TableCell>
-              <TableCell>{block.employee?.first_name} {block.employee?.last_name}</TableCell>
+              <TableCell>
+                {block.employee ? `${block.employee.first_name} ${block.employee.last_name}` : '-'}
+              </TableCell>
               <TableCell>{block.monday?.shift_type?.name}</TableCell>
               <TableCell>{block.tuesday?.shift_type?.name}</TableCell>
               <TableCell>{block.wednesday?.shift_type?.name}</TableCell>

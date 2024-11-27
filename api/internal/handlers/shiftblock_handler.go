@@ -20,7 +20,8 @@ func NewShiftBlockHandler(db *gorm.DB) *ShiftBlockHandler {
 
 func (h *ShiftBlockHandler) GetShiftBlocks(w http.ResponseWriter, r *http.Request) {
 	var shiftBlocks []models.ShiftBlock
-	result := h.db.Preload("Employee").
+	result := h.db.
+		Preload("Employee").
 		Preload("Monday.ShiftType").
 		Preload("Tuesday.ShiftType").
 		Preload("Wednesday.ShiftType").
