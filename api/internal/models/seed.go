@@ -140,6 +140,7 @@ func SeedDatabase(db *gorm.DB) {
 		{"Max", "Hartmann", "#991b1b"},
 	}
 
+	var employees []Employee
 	for _, name := range employeeNames {
 		department := itDepartment
 		if rand.Float32() < 0.7 {
@@ -156,18 +157,62 @@ func SeedDatabase(db *gorm.DB) {
 			Color:        name.Color,
 		}
 		db.Create(&employee)
+		employees = append(employees, employee)
+	}
 
-		/* // Beispiel-ShiftTemplate für jeden Mitarbeiter
+	// Schichtvorlagen
+	shiftTemplates := []struct {
+		Name        string
+		Description string
+		Color       string
+		ShiftTypes  [7]uint // Mo-So
+	}{
+		{
+			Name:        "Frühschicht",
+			Description: "Nur Frühschichten",
+			Color:       "#0ea5e9",
+			ShiftTypes:  [7]uint{früh.ID, früh.ID, früh.ID, früh.ID, früh.ID, 0, 0},
+		},
+		{
+			Name:        "Spätschicht",
+			Description: "Nur Spätschichten",
+			Color:       "#6366f1",
+			ShiftTypes:  [7]uint{spät.ID, spät.ID, spät.ID, spät.ID, spät.ID, 0, 0},
+		},
+		{
+			Name:        "Nachtschicht",
+			Description: "Nur Nachtschichten",
+			Color:       "#8b5cf6",
+			ShiftTypes:  [7]uint{nacht.ID, nacht.ID, nacht.ID, nacht.ID, nacht.ID, 0, 0},
+		},
+		{
+			Name:        "Früh/Spät Mix",
+			Description: "Gemischte Schichten",
+			Color:       "#22c55e",
+			ShiftTypes:  [7]uint{früh.ID, spät.ID, früh.ID, spät.ID, früh.ID, 0, 0},
+		},
+		{
+			Name:        "Teilzeit",
+			Description: "Teilzeitschichten",
+			Color:       "#f59e0b",
+			ShiftTypes:  [7]uint{teilzeit.ID, teilzeit.ID, teilzeit.ID, 0, 0, 0, 0},
+		},
+	}
+
+	for _, template := range shiftTemplates {
+		employeeID := employees[rand.Intn(len(employees))].ID
 		db.Create(&ShiftTemplate{
-			Name:        "Standardwoche " + employee.FirstName,
-			EmployeeID:  employee.ID,
-			Description: "Normale Arbeitswoche für " + employee.FirstName,
-			Color:       employee.Color,
-			Monday:      ShiftDay{ShiftTypeID: früh.ID},
-			Tuesday:     ShiftDay{ShiftTypeID: früh.ID},
-			Wednesday:   ShiftDay{ShiftTypeID: spät.ID},
-			Thursday:    ShiftDay{ShiftTypeID: spät.ID},
-			Friday:      ShiftDay{ShiftTypeID: nacht.ID},
-		}) */
+			Name:        template.Name,
+			Description: template.Description,
+			Color:       template.Color,
+			EmployeeID:  &employeeID,
+			Monday:      ShiftDay{ShiftTypeID: template.ShiftTypes[0]},
+			Tuesday:     ShiftDay{ShiftTypeID: template.ShiftTypes[1]},
+			Wednesday:   ShiftDay{ShiftTypeID: template.ShiftTypes[2]},
+			Thursday:    ShiftDay{ShiftTypeID: template.ShiftTypes[3]},
+			Friday:      ShiftDay{ShiftTypeID: template.ShiftTypes[4]},
+			Saturday:    ShiftDay{ShiftTypeID: template.ShiftTypes[5]},
+			Sunday:      ShiftDay{ShiftTypeID: template.ShiftTypes[6]},
+		})
 	}
 }
