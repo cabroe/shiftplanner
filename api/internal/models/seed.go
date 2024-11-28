@@ -157,7 +157,7 @@ func SeedDatabase(db *gorm.DB) {
 		}
 		db.Create(&employee)
 
-		// Beispiel-ShiftTemplate für jeden Mitarbeiter
+		/* // Beispiel-ShiftTemplate für jeden Mitarbeiter
 		db.Create(&ShiftTemplate{
 			Name:        "Standardwoche " + employee.FirstName,
 			EmployeeID:  employee.ID,
@@ -168,6 +168,6 @@ func SeedDatabase(db *gorm.DB) {
 			Wednesday:   ShiftDay{ShiftTypeID: spät.ID},
 			Thursday:    ShiftDay{ShiftTypeID: spät.ID},
 			Friday:      ShiftDay{ShiftTypeID: nacht.ID},
-		})
+		}) */
 	}
 }

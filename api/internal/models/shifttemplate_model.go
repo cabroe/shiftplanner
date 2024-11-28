@@ -1,17 +1,14 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
 type ShiftTemplate struct {
 	gorm.Model
 	Name        string    `json:"name"`
-	StartDate   time.Time `json:"start_date"`
-	EmployeeID  uint      `json:"employee_id"`
-	Employee    Employee  `json:"employee"`
+	EmployeeID  *uint     `json:"employee_id"`
+	Employee    *Employee `json:"employee"`
 	Description string    `json:"description"`
 	Color       string    `json:"color"`
 	Monday      ShiftDay  `json:"monday" gorm:"embedded;embedded_prefix:monday_"`

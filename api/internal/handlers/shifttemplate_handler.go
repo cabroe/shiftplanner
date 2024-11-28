@@ -64,6 +64,21 @@ func (h *ShiftTemplateHandler) CreateShiftTemplate(w http.ResponseWriter, r *htt
 		return
 	}
 
+	if shiftTemplate.EmployeeID != nil {
+		var employee models.Employee
+		if result := h.db.First(&employee, *shiftTemplate.EmployeeID); result.Error != nil {
+			response := ApiResponse{
+				Success: false,
+				Message: "Mitarbeiter nicht gefunden",
+				Data:    nil,
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+	}
+
 	result := h.db.Create(&shiftTemplate)
 	if result.Error != nil {
 		response := ApiResponse{
@@ -157,6 +172,21 @@ func (h *ShiftTemplateHandler) UpdateShiftTemplate(w http.ResponseWriter, r *htt
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
 		return
+	}
+
+	if shiftTemplate.EmployeeID != nil {
+		var employee models.Employee
+		if result := h.db.First(&employee, *shiftTemplate.EmployeeID); result.Error != nil {
+			response := ApiResponse{
+				Success: false,
+				Message: "Mitarbeiter nicht gefunden",
+				Data:    nil,
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(response)
+			return
+		}
 	}
 
 	h.db.Save(&shiftTemplate)
