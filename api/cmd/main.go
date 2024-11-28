@@ -19,13 +19,11 @@ import (
 )
 
 func main() {
-	// Docker oder Localhost?
 	var dbHost = os.Getenv("DB_HOST")
 	if dbHost == "" {
 		dbHost = "localhost"
 	}
 
-	// Datenbankverbindung konfigurieren
 	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shiftplanner port=5432 sslmode=disable", dbHost)
 	var db *gorm.DB
 	var err error
@@ -46,31 +44,27 @@ func main() {
 	}
 
 	// Datenbank-Reset
-	db.Migrator().DropTable(&models.ShiftBlock{})
+	db.Migrator().DropTable(&models.ShiftTemplate{})
 	db.Migrator().DropTable(&models.Shift{})
 	db.Migrator().DropTable(&models.Employee{})
 	db.Migrator().DropTable(&models.ShiftType{})
 	db.Migrator().DropTable(&models.Department{})
 	log.Printf("Datenbank-Reset erfolgreich")
 
-	// Auto-Migration in korrekter Reihenfolge
+	// Auto-Migration
 	db.AutoMigrate(&models.Department{})
 	db.AutoMigrate(&models.Employee{})
 	db.AutoMigrate(&models.ShiftType{})
 	db.AutoMigrate(&models.Shift{})
-	db.AutoMigrate(&models.ShiftBlock{})
+	db.AutoMigrate(&models.ShiftTemplate{})
 	log.Printf("Datenbank-Migration erfolgreich")
 
 	models.SeedDatabase(db)
 	log.Printf("Datenbank erfolgreich mit Standardwerten befüllt")
 
-	// Router initialisieren
 	router := mux.NewRouter()
-
-	// Routes setup
 	routes.SetupRoutes(router, db)
 
-	// CORS Konfiguration
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -78,10 +72,8 @@ func main() {
 		AllowCredentials: true,
 	})
 
-	// Handler mit CORS wrappen
 	handler := c.Handler(router)
 
-	// Server mit Timeout-Einstellungen
 	server := &http.Server{
 		Addr:         ":8080",
 		Handler:      handler,
@@ -90,7 +82,6 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Graceful Shutdown
 	go func() {
 		log.Println("Server startet auf Port 8080...")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -98,7 +89,6 @@ func main() {
 		}
 	}()
 
-	// Auf Shutdown-Signal warten
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

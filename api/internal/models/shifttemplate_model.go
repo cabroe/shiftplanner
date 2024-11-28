@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type ShiftBlock struct {
+type ShiftTemplate struct {
 	gorm.Model
 	Name        string    `json:"name"`
 	StartDate   time.Time `json:"start_date"`

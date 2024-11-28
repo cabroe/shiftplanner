@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Employee, ShiftBlock, ShiftType } from "@/types"
+import { Employee, ShiftTemplate, ShiftType } from "@/types"
 
-interface ShiftBlockFormProps {
-  shiftBlock?: ShiftBlock | null
+interface ShiftTemplateFormProps {
+  shiftTemplate?: ShiftTemplate | null
   onSubmit: () => void
 }
 
@@ -22,10 +22,10 @@ const WEEKDAYS = [
   { key: 'sunday', label: 'Sonntag' }
 ]
 
-export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
+export function ShiftTemplateForm({ shiftTemplate, onSubmit }: ShiftTemplateFormProps) {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [shiftTypes, setShiftTypes] = useState<ShiftType[]>([])
-  const [formData, setFormData] = useState<ShiftBlock>({
+  const [formData, setFormData] = useState<ShiftTemplate>({
     ID: 0,
     name: '',
     description: '',
@@ -64,15 +64,15 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       setEmployees(empData.data)
       setShiftTypes(typeData.data)
 
-      if (shiftBlock?.ID) {
-        const blockResponse = await fetch(`${API_URL}/api/shiftblocks/${shiftBlock.ID}`)
-        const blockData = await blockResponse.json()
-        setFormData(blockData.data)
+      if (shiftTemplate?.ID) {
+        const templateResponse = await fetch(`${API_URL}/api/shifttemplates/${shiftTemplate.ID}`)
+        const templateData = await templateResponse.json()
+        setFormData(templateData.data)
       }
     }
 
     initializeForm()
-  }, [shiftBlock])
+  }, [shiftTemplate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,12 +89,12 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       sunday: { shift_type_id: Number(formData.sunday.shift_type_id) }
     }
     
-    const url = shiftBlock?.ID 
-      ? `${API_URL}/api/shiftblocks/${shiftBlock.ID}`
-      : `${API_URL}/api/shiftblocks`
+    const url = shiftTemplate?.ID 
+      ? `${API_URL}/api/shifttemplates/${shiftTemplate.ID}`
+      : `${API_URL}/api/shifttemplates`
     
     const response = await fetch(url, {
-      method: shiftBlock?.ID ? 'PUT' : 'POST',
+      method: shiftTemplate?.ID ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -217,7 +217,7 @@ export function ShiftBlockForm({ shiftBlock, onSubmit }: ShiftBlockFormProps) {
       ))}
 
       <Button type="submit" className="w-full">
-        {shiftBlock?.ID ? 'Aktualisieren' : 'Erstellen'}
+        {shiftTemplate?.ID ? 'Aktualisieren' : 'Erstellen'}
       </Button>
     </form>
   )

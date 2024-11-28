@@ -1,4 +1,4 @@
 export * from './department'
 export * from './employee'
-export * from './shiftblock'
+export * from './shifttemplate'
 export * from './shifttype'

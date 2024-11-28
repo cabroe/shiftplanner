@@ -12,7 +12,7 @@ func SetupRoutes(router *mux.Router, db *gorm.DB) {
 	shiftHandler := handlers.NewShiftHandler(db)
 	employeeHandler := handlers.NewEmployeeHandler(db)
 	shiftTypeHandler := handlers.NewShiftTypeHandler(db)
-	shiftBlockHandler := handlers.NewShiftBlockHandler(db)
+	shiftTemplateHandler := handlers.NewShiftTemplateHandler(db)
 	departmentHandler := handlers.NewDepartmentHandler(db)
 
 	// API routes
@@ -32,12 +32,12 @@ func SetupRoutes(router *mux.Router, db *gorm.DB) {
 	api.HandleFunc("/shifttypes/{id}", shiftTypeHandler.UpdateShiftType).Methods("PUT")
 	api.HandleFunc("/shifttypes/{id}", shiftTypeHandler.DeleteShiftType).Methods("DELETE")
 
-	// ShiftBlock routes
-	api.HandleFunc("/shiftblocks", shiftBlockHandler.GetShiftBlocks).Methods("GET")
-	api.HandleFunc("/shiftblocks", shiftBlockHandler.CreateShiftBlock).Methods("POST")
-	api.HandleFunc("/shiftblocks/{id}", shiftBlockHandler.GetShiftBlock).Methods("GET")
-	api.HandleFunc("/shiftblocks/{id}", shiftBlockHandler.UpdateShiftBlock).Methods("PUT")
-	api.HandleFunc("/shiftblocks/{id}", shiftBlockHandler.DeleteShiftBlock).Methods("DELETE")
+	// ShiftTemplate routes
+	api.HandleFunc("/shifttemplates", shiftTemplateHandler.GetShiftTemplates).Methods("GET")
+	api.HandleFunc("/shifttemplates", shiftTemplateHandler.CreateShiftTemplate).Methods("POST")
+	api.HandleFunc("/shifttemplates/{id}", shiftTemplateHandler.GetShiftTemplate).Methods("GET")
+	api.HandleFunc("/shifttemplates/{id}", shiftTemplateHandler.UpdateShiftTemplate).Methods("PUT")
+	api.HandleFunc("/shifttemplates/{id}", shiftTemplateHandler.DeleteShiftTemplate).Methods("DELETE")
 
 	// Department routes
 	api.HandleFunc("/departments", departmentHandler.GetDepartments).Methods("GET")

@@ -1,7 +1,7 @@
 import { Employee } from './employee'
 import { ShiftType } from './shifttype'
 
-export interface ShiftBlock {
+export interface ShiftTemplate {
   ID: number
   name: string
   description: string

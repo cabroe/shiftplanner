@@ -6,12 +6,11 @@ import (
 )
 
 func SeedDatabase(db *gorm.DB) {
-	// Check if admin already exists
+	// Admin-Teil bleibt unverändert
 	var adminCount int64
 	db.Model(&Admin{}).Count(&adminCount)
 
 	if adminCount == 0 {
-		// Admin erstellen
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
 		admin := Admin{
 			Username:    "admin",
@@ -25,28 +24,28 @@ func SeedDatabase(db *gorm.DB) {
 		db.Create(&admin)
 	}
 
-	// Departments erstellen
+	// Departments bleiben unverändert
 	itDepartment := Department{
 		Name:        "IT",
 		Description: "Informationstechnologie Abteilung",
-		Color:       "#3b82f6", // blue
+		Color:       "#3b82f6",
 	}
 	db.Create(&itDepartment)
 
 	hrDepartment := Department{
 		Name:        "HR",
 		Description: "Human Resources Abteilung",
-		Color:       "#22c55e", // green
+		Color:       "#22c55e",
 	}
 	db.Create(&hrDepartment)
 
-	// ShiftTypes erstellen
+	// ShiftTypes bleiben unverändert
 	früh := ShiftType{
 		Name:        "Früh",
 		Description: "Frühschicht",
 		StartTime:   "06:00",
 		EndTime:     "14:00",
-		Color:       "#0ea5e9", // sky
+		Color:       "#0ea5e9",
 	}
 	db.Create(&früh)
 
@@ -55,7 +54,7 @@ func SeedDatabase(db *gorm.DB) {
 		Description: "Spätschicht",
 		StartTime:   "14:00",
 		EndTime:     "22:00",
-		Color:       "#6366f1", // indigo
+		Color:       "#6366f1",
 	}
 	db.Create(&spät)
 
@@ -64,18 +63,18 @@ func SeedDatabase(db *gorm.DB) {
 		Description: "Nachtschicht",
 		StartTime:   "22:00",
 		EndTime:     "06:00",
-		Color:       "#8b5cf6", // violet
+		Color:       "#8b5cf6",
 	}
 	db.Create(&nacht)
 
-	// Employees erstellen
+	// Employees bleiben unverändert
 	maxMustermann := Employee{
 		FirstName:    "Max",
 		LastName:     "Mustermann",
 		Email:        "max@example.com",
 		Password:     "password123",
 		DepartmentID: itDepartment.ID,
-		Color:        "#f97316", // orange
+		Color:        "#f97316",
 	}
 	db.Create(&maxMustermann)
 
@@ -85,16 +84,16 @@ func SeedDatabase(db *gorm.DB) {
 		Email:        "erika@example.com",
 		Password:     "password123",
 		DepartmentID: hrDepartment.ID,
-		Color:        "#ec4899", // pink
+		Color:        "#ec4899",
 	}
 	db.Create(&erikaMusterfrau)
 
-	// Beispiel-ShiftBlock erstellen
-	db.Create(&ShiftBlock{
+	// Beispiel-ShiftTemplate erstellen
+	db.Create(&ShiftTemplate{
 		Name:        "Standardwoche",
 		EmployeeID:  maxMustermann.ID,
 		Description: "Normale Arbeitswoche",
-		Color:       "#14b8a6", // teal
+		Color:       "#14b8a6",
 		Monday:      ShiftDay{ShiftTypeID: früh.ID},
 		Tuesday:     ShiftDay{ShiftTypeID: früh.ID},
 		Wednesday:   ShiftDay{ShiftTypeID: spät.ID},

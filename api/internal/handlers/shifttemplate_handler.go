@@ -9,16 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type ShiftBlockHandler struct {
+type ShiftTemplateHandler struct {
 	db *gorm.DB
 }
 
-func NewShiftBlockHandler(db *gorm.DB) *ShiftBlockHandler {
-	return &ShiftBlockHandler{db: db}
+func NewShiftTemplateHandler(db *gorm.DB) *ShiftTemplateHandler {
+	return &ShiftTemplateHandler{db: db}
 }
 
-func (h *ShiftBlockHandler) GetShiftBlocks(w http.ResponseWriter, r *http.Request) {
-	var shiftBlocks []models.ShiftBlock
+func (h *ShiftTemplateHandler) GetShiftTemplates(w http.ResponseWriter, r *http.Request) {
+	var shiftTemplates []models.ShiftTemplate
 	result := h.db.Preload("Employee").
 		Preload("Monday.ShiftType").
 		Preload("Tuesday.ShiftType").
@@ -27,12 +27,12 @@ func (h *ShiftBlockHandler) GetShiftBlocks(w http.ResponseWriter, r *http.Reques
 		Preload("Friday.ShiftType").
 		Preload("Saturday.ShiftType").
 		Preload("Sunday.ShiftType").
-		Find(&shiftBlocks)
+		Find(&shiftTemplates)
 
 	if result.Error != nil {
 		response := ApiResponse{
 			Success: false,
-			Message: "Fehler beim Abrufen der Schichtblöcke",
+			Message: "Fehler beim Abrufen der Schichtvorlagen",
 			Data:    nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -43,16 +43,16 @@ func (h *ShiftBlockHandler) GetShiftBlocks(w http.ResponseWriter, r *http.Reques
 
 	response := ApiResponse{
 		Success: true,
-		Message: "Schichtblöcke erfolgreich abgerufen",
-		Data:    shiftBlocks,
+		Message: "Schichtvorlagen erfolgreich abgerufen",
+		Data:    shiftTemplates,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
-func (h *ShiftBlockHandler) CreateShiftBlock(w http.ResponseWriter, r *http.Request) {
-	var shiftBlock models.ShiftBlock
-	if err := json.NewDecoder(r.Body).Decode(&shiftBlock); err != nil {
+func (h *ShiftTemplateHandler) CreateShiftTemplate(w http.ResponseWriter, r *http.Request) {
+	var shiftTemplate models.ShiftTemplate
+	if err := json.NewDecoder(r.Body).Decode(&shiftTemplate); err != nil {
 		response := ApiResponse{
 			Success: false,
 			Message: "Ungültige Eingabedaten",
@@ -64,11 +64,11 @@ func (h *ShiftBlockHandler) CreateShiftBlock(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	result := h.db.Create(&shiftBlock)
+	result := h.db.Create(&shiftTemplate)
 	if result.Error != nil {
 		response := ApiResponse{
 			Success: false,
-			Message: "Fehler beim Erstellen des Schichtblocks",
+			Message: "Fehler beim Erstellen der Schichtvorlage",
 			Data:    nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -85,20 +85,20 @@ func (h *ShiftBlockHandler) CreateShiftBlock(w http.ResponseWriter, r *http.Requ
 		Preload("Friday.ShiftType").
 		Preload("Saturday.ShiftType").
 		Preload("Sunday.ShiftType").
-		First(&shiftBlock, shiftBlock.ID)
+		First(&shiftTemplate, shiftTemplate.ID)
 
 	response := ApiResponse{
 		Success: true,
-		Message: "Schichtblock erfolgreich erstellt",
-		Data:    shiftBlock,
+		Message: "Schichtvorlage erfolgreich erstellt",
+		Data:    shiftTemplate,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
-func (h *ShiftBlockHandler) GetShiftBlock(w http.ResponseWriter, r *http.Request) {
+func (h *ShiftTemplateHandler) GetShiftTemplate(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var shiftBlock models.ShiftBlock
+	var shiftTemplate models.ShiftTemplate
 
 	result := h.db.Preload("Employee").
 		Preload("Monday.ShiftType").
@@ -108,12 +108,12 @@ func (h *ShiftBlockHandler) GetShiftBlock(w http.ResponseWriter, r *http.Request
 		Preload("Friday.ShiftType").
 		Preload("Saturday.ShiftType").
 		Preload("Sunday.ShiftType").
-		First(&shiftBlock, params["id"])
+		First(&shiftTemplate, params["id"])
 
 	if result.Error != nil {
 		response := ApiResponse{
 			Success: false,
-			Message: "Schichtblock nicht gefunden",
+			Message: "Schichtvorlage nicht gefunden",
 			Data:    nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -124,21 +124,21 @@ func (h *ShiftBlockHandler) GetShiftBlock(w http.ResponseWriter, r *http.Request
 
 	response := ApiResponse{
 		Success: true,
-		Message: "Schichtblock erfolgreich abgerufen",
-		Data:    shiftBlock,
+		Message: "Schichtvorlage erfolgreich abgerufen",
+		Data:    shiftTemplate,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
-func (h *ShiftBlockHandler) UpdateShiftBlock(w http.ResponseWriter, r *http.Request) {
+func (h *ShiftTemplateHandler) UpdateShiftTemplate(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var shiftBlock models.ShiftBlock
+	var shiftTemplate models.ShiftTemplate
 
-	if result := h.db.First(&shiftBlock, params["id"]); result.Error != nil {
+	if result := h.db.First(&shiftTemplate, params["id"]); result.Error != nil {
 		response := ApiResponse{
 			Success: false,
-			Message: "Schichtblock nicht gefunden",
+			Message: "Schichtvorlage nicht gefunden",
 			Data:    nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -147,7 +147,7 @@ func (h *ShiftBlockHandler) UpdateShiftBlock(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&shiftBlock); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&shiftTemplate); err != nil {
 		response := ApiResponse{
 			Success: false,
 			Message: "Ungültige Eingabedaten",
@@ -159,7 +159,7 @@ func (h *ShiftBlockHandler) UpdateShiftBlock(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	h.db.Save(&shiftBlock)
+	h.db.Save(&shiftTemplate)
 
 	h.db.Preload("Employee").
 		Preload("Monday.ShiftType").
@@ -169,25 +169,25 @@ func (h *ShiftBlockHandler) UpdateShiftBlock(w http.ResponseWriter, r *http.Requ
 		Preload("Friday.ShiftType").
 		Preload("Saturday.ShiftType").
 		Preload("Sunday.ShiftType").
-		First(&shiftBlock, shiftBlock.ID)
+		First(&shiftTemplate, shiftTemplate.ID)
 
 	response := ApiResponse{
 		Success: true,
-		Message: "Schichtblock erfolgreich aktualisiert",
-		Data:    shiftBlock,
+		Message: "Schichtvorlage erfolgreich aktualisiert",
+		Data:    shiftTemplate,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
-func (h *ShiftBlockHandler) DeleteShiftBlock(w http.ResponseWriter, r *http.Request) {
+func (h *ShiftTemplateHandler) DeleteShiftTemplate(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var shiftBlock models.ShiftBlock
+	var shiftTemplate models.ShiftTemplate
 
-	if result := h.db.First(&shiftBlock, params["id"]); result.Error != nil {
+	if result := h.db.First(&shiftTemplate, params["id"]); result.Error != nil {
 		response := ApiResponse{
 			Success: false,
-			Message: "Schichtblock nicht gefunden",
+			Message: "Schichtvorlage nicht gefunden",
 			Data:    nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -196,10 +196,10 @@ func (h *ShiftBlockHandler) DeleteShiftBlock(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if result := h.db.Delete(&shiftBlock); result.Error != nil {
+	if result := h.db.Delete(&shiftTemplate); result.Error != nil {
 		response := ApiResponse{
 			Success: false,
-			Message: "Fehler beim Löschen des Schichtblocks",
+			Message: "Fehler beim Löschen der Schichtvorlage",
 			Data:    nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -210,7 +210,7 @@ func (h *ShiftBlockHandler) DeleteShiftBlock(w http.ResponseWriter, r *http.Requ
 
 	response := ApiResponse{
 		Success: true,
-		Message: "Schichtblock erfolgreich gelöscht",
+		Message: "Schichtvorlage erfolgreich gelöscht",
 		Data:    nil,
 	}
 	w.Header().Set("Content-Type", "application/json")

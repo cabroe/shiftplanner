@@ -1,34 +1,34 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Employee, Department, ShiftBlock, ShiftType } from "@/types"
+import { Employee, Department, ShiftTemplate, ShiftType } from "@/types"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 const DashboardPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
-  const [shiftBlocks, setShiftBlocks] = useState<ShiftBlock[]>([])
+  const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplate[]>([])
   const [shiftTypes, setShiftTypes] = useState<ShiftType[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
-      const [empResponse, deptResponse, blockResponse, typeResponse] = await Promise.all([
+      const [empResponse, deptResponse, templateResponse, typeResponse] = await Promise.all([
         fetch(`${API_URL}/api/employees`),
         fetch(`${API_URL}/api/departments`),
-        fetch(`${API_URL}/api/shiftblocks`),
+        fetch(`${API_URL}/api/shifttemplates`),
         fetch(`${API_URL}/api/shifttypes`)
       ])
 
-      const [empData, deptData, blockData, typeData] = await Promise.all([
+      const [empData, deptData, templateData, typeData] = await Promise.all([
         empResponse.json(),
         deptResponse.json(),
-        blockResponse.json(),
+        templateResponse.json(),
         typeResponse.json()
       ])
 
       setEmployees(empData.data)
       setDepartments(deptData.data)
-      setShiftBlocks(blockData.data)
+      setShiftTemplates(templateData.data)
       setShiftTypes(typeData.data)
     }
 
@@ -52,11 +52,11 @@ const DashboardPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Schichtblöcke</CardTitle>
+            <CardTitle>Schichtvorlagen</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{shiftBlocks.length}</div>
-            <p className="text-xs text-muted-foreground">Aktive Schichtblöcke</p>
+            <div className="text-2xl font-bold">{shiftTemplates.length}</div>
+            <p className="text-xs text-muted-foreground">Aktive Schichtvorlagen</p>
           </CardContent>
         </Card>
 

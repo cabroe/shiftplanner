@@ -58,17 +58,17 @@ const Sidebar = () => {
               </Button>
             </NavLink>
 
-            <NavLink to="/shift-blocks">
-              <Button variant="ghost" className="w-full justify-start p-4">
-                <Clock className="mr-2 h-4 w-4" />
-                Schichtblöcke
-              </Button>
-            </NavLink>
-
             <NavLink to="/shift-types">
               <Button variant="ghost" className="w-full justify-start p-4">
                 <Layers className="mr-2 h-4 w-4" />
                 Schichttypen
+              </Button>
+            </NavLink>
+
+            <NavLink to="/shift-templates">
+              <Button variant="ghost" className="w-full justify-start p-4">
+                <Clock className="mr-2 h-4 w-4" />
+                Schichtvorlagen
               </Button>
             </NavLink>
           </div>

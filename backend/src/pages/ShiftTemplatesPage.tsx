@@ -1,66 +1,66 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ShiftBlockForm } from "@/components/forms/ShiftBlockForm"
+import { ShiftTemplateForm } from "@/components/forms/ShiftTemplateForm"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { PlusCircle, Pencil, Trash2 } from "lucide-react"
-import { ShiftBlock } from "@/types"
+import { ShiftTemplate } from "@/types"
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
-const ShiftBlocksPage = () => {
-  const [shiftBlocks, setShiftBlocks] = useState<ShiftBlock[]>([])
-  const [selectedShiftBlock, setSelectedShiftBlock] = useState<ShiftBlock | null>(null)
+const ShiftTemplatesPage = () => {
+  const [shiftTemplates, setShiftTemplates] = useState<ShiftTemplate[]>([])
+  const [selectedShiftTemplate, setSelectedShiftTemplate] = useState<ShiftTemplate | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   useEffect(() => {
-    loadShiftBlocks()
+    loadShiftTemplates()
   }, [])
 
-  const loadShiftBlocks = () => {
-    fetch(`${API_URL}/api/shiftblocks`)
+  const loadShiftTemplates = () => {
+    fetch(`${API_URL}/api/shifttemplates`)
       .then(res => res.json())
-      .then(response => setShiftBlocks(response.data))
+      .then(response => setShiftTemplates(response.data))
   }
 
   const handleDelete = (id: number) => {
-    if (confirm('Schichtblock wirklich löschen?')) {
-      fetch(`${API_URL}/api/shiftblocks/${id}`, {
+    if (confirm('Schichtvorlage wirklich löschen?')) {
+      fetch(`${API_URL}/api/shifttemplates/${id}`, {
         method: 'DELETE'
-      }).then(() => loadShiftBlocks())
+      }).then(() => loadShiftTemplates())
     }
   }
 
-  const handleEdit = (shiftBlock: ShiftBlock) => {
-    setSelectedShiftBlock(shiftBlock)
+  const handleEdit = (shiftTemplate: ShiftTemplate) => {
+    setSelectedShiftTemplate(shiftTemplate)
     setIsDialogOpen(true)
   }
 
   const handleFormSubmit = () => {
     setIsDialogOpen(false)
-    setSelectedShiftBlock(null)
-    loadShiftBlocks()
+    setSelectedShiftTemplate(null)
+    loadShiftTemplates()
   }
 
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Schichtblöcke</h1>
+        <h1 className="text-3xl font-bold">Schichtvorlagen</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setSelectedShiftBlock(null)}>
+            <Button onClick={() => setSelectedShiftTemplate(null)}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Neuer Schichtblock
+              Neue Schichtvorlage
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {selectedShiftBlock ? 'Schichtblock bearbeiten' : 'Neuer Schichtblock'}
+                {selectedShiftTemplate ? 'Schichtvorlage bearbeiten' : 'Neue Schichtvorlage'}
               </DialogTitle>
             </DialogHeader>
-            <ShiftBlockForm 
-              shiftBlock={selectedShiftBlock} 
+            <ShiftTemplateForm 
+              shiftTemplate={selectedShiftTemplate} 
               onSubmit={handleFormSubmit}
             />
           </DialogContent>
@@ -86,31 +86,31 @@ const ShiftBlocksPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {shiftBlocks.map(block => (
-            <TableRow key={block.ID}>
-              <TableCell>{block.name}</TableCell>
-              <TableCell>{block.description}</TableCell>
-              <TableCell>{block.employee?.first_name} {block.employee?.last_name}</TableCell>
-              <TableCell>{new Date(block.start_date).toLocaleDateString()}</TableCell>
-              <TableCell>{block.monday?.shift_type?.name}</TableCell>
-              <TableCell>{block.tuesday?.shift_type?.name}</TableCell>
-              <TableCell>{block.wednesday?.shift_type?.name}</TableCell>
-              <TableCell>{block.thursday?.shift_type?.name}</TableCell>
-              <TableCell>{block.friday?.shift_type?.name}</TableCell>
-              <TableCell>{block.saturday?.shift_type?.name}</TableCell>
-              <TableCell>{block.sunday?.shift_type?.name}</TableCell>
+          {shiftTemplates.map(template => (
+            <TableRow key={template.ID}>
+              <TableCell>{template.name}</TableCell>
+              <TableCell>{template.description}</TableCell>
+              <TableCell>{template.employee?.first_name} {template.employee?.last_name}</TableCell>
+              <TableCell>{new Date(template.start_date).toLocaleDateString()}</TableCell>
+              <TableCell>{template.monday?.shift_type?.name}</TableCell>
+              <TableCell>{template.tuesday?.shift_type?.name}</TableCell>
+              <TableCell>{template.wednesday?.shift_type?.name}</TableCell>
+              <TableCell>{template.thursday?.shift_type?.name}</TableCell>
+              <TableCell>{template.friday?.shift_type?.name}</TableCell>
+              <TableCell>{template.saturday?.shift_type?.name}</TableCell>
+              <TableCell>{template.sunday?.shift_type?.name}</TableCell>
               <TableCell>
                 <div 
                   className="w-6 h-6 rounded-full" 
-                  style={{ backgroundColor: block.color }}
+                  style={{ backgroundColor: template.color }}
                 />
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => handleEdit(block)}>
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(template)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(block.ID)}>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(template.ID)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -123,4 +123,4 @@ const ShiftBlocksPage = () => {
   )
 }
 
-export default ShiftBlocksPage
+export default ShiftTemplatesPage
