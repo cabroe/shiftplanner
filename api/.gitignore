@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+vendor/
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build output
+dist/
+build/
+out/
+
+# Temp files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# API documentation
+docs/
+apidoc/
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+
+# Cache
+.cache/
+.npm/
+.eslintcache
