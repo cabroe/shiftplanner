@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"shift-planner/api/internal/models"
 
@@ -19,7 +20,7 @@ func NewShiftTypeHandler(db *gorm.DB) *ShiftTypeHandler {
 
 func (h *ShiftTypeHandler) GetShiftTypes(w http.ResponseWriter, r *http.Request) {
 	var shiftTypes []models.ShiftType
-	result := h.db.Find(&shiftTypes)
+	result := h.db.Order("name ASC").Find(&shiftTypes)
 
 	if result.Error != nil {
 		response := ApiResponse{
@@ -27,6 +28,7 @@ func (h *ShiftTypeHandler) GetShiftTypes(w http.ResponseWriter, r *http.Request)
 			Message: "Fehler beim Abrufen der Schichttypen",
 			Data:    nil,
 		}
+		log.Printf("GetShiftTypes Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -38,6 +40,7 @@ func (h *ShiftTypeHandler) GetShiftTypes(w http.ResponseWriter, r *http.Request)
 		Message: "Schichttypen erfolgreich abgerufen",
 		Data:    shiftTypes,
 	}
+	log.Printf("GetShiftTypes Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -50,6 +53,7 @@ func (h *ShiftTypeHandler) CreateShiftType(w http.ResponseWriter, r *http.Reques
 			Message: "Ungültige Eingabedaten",
 			Data:    nil,
 		}
+		log.Printf("CreateShiftType Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -63,6 +67,7 @@ func (h *ShiftTypeHandler) CreateShiftType(w http.ResponseWriter, r *http.Reques
 			Message: "Fehler beim Erstellen des Schichttyps",
 			Data:    nil,
 		}
+		log.Printf("CreateShiftType Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -74,6 +79,7 @@ func (h *ShiftTypeHandler) CreateShiftType(w http.ResponseWriter, r *http.Reques
 		Message: "Schichttyp erfolgreich erstellt",
 		Data:    shiftType,
 	}
+	log.Printf("CreateShiftType Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -89,6 +95,7 @@ func (h *ShiftTypeHandler) GetShiftType(w http.ResponseWriter, r *http.Request) 
 			Message: "Schichttyp nicht gefunden",
 			Data:    nil,
 		}
+		log.Printf("GetShiftType Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -100,6 +107,7 @@ func (h *ShiftTypeHandler) GetShiftType(w http.ResponseWriter, r *http.Request) 
 		Message: "Schichttyp erfolgreich abgerufen",
 		Data:    shiftType,
 	}
+	log.Printf("GetShiftType Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -114,6 +122,7 @@ func (h *ShiftTypeHandler) UpdateShiftType(w http.ResponseWriter, r *http.Reques
 			Message: "Schichttyp nicht gefunden",
 			Data:    nil,
 		}
+		log.Printf("UpdateShiftType Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -126,6 +135,7 @@ func (h *ShiftTypeHandler) UpdateShiftType(w http.ResponseWriter, r *http.Reques
 			Message: "Ungültige Eingabedaten",
 			Data:    nil,
 		}
+		log.Printf("UpdateShiftType Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -139,6 +149,7 @@ func (h *ShiftTypeHandler) UpdateShiftType(w http.ResponseWriter, r *http.Reques
 		Message: "Schichttyp erfolgreich aktualisiert",
 		Data:    shiftType,
 	}
+	log.Printf("UpdateShiftType Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -153,6 +164,7 @@ func (h *ShiftTypeHandler) DeleteShiftType(w http.ResponseWriter, r *http.Reques
 			Message: "Schichttyp nicht gefunden",
 			Data:    nil,
 		}
+		log.Printf("DeleteShiftType Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -166,6 +178,7 @@ func (h *ShiftTypeHandler) DeleteShiftType(w http.ResponseWriter, r *http.Reques
 		Message: "Schichttyp erfolgreich gelöscht",
 		Data:    nil,
 	}
+	log.Printf("DeleteShiftType Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

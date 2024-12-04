@@ -19,6 +19,17 @@ import (
 )
 
 func main() {
+	// Logfile erstellen/öffnen
+	logFile, err := os.OpenFile("api.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal("Konnte Log-Datei nicht öffnen:", err)
+	}
+	defer logFile.Close()
+
+	// Logger konfigurieren
+	log.SetOutput(logFile)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+
 	var dbHost = os.Getenv("DB_HOST")
 	if dbHost == "" {
 		dbHost = "localhost"
@@ -26,7 +37,6 @@ func main() {
 
 	dsn := fmt.Sprintf("host=%s user=postgres password=postgres dbname=shiftplanner port=5432 sslmode=disable", dbHost)
 	var db *gorm.DB
-	var err error
 	maxRetries := 5
 
 	for i := 0; i < maxRetries; i++ {

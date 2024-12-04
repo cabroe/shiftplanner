@@ -153,7 +153,7 @@ func SeedDatabase(db *gorm.DB) {
 			LastName:     name.LastName,
 			Email:        strings.ToLower(name.FirstName + "." + name.LastName + "@example.com"),
 			Password:     "password123",
-			DepartmentID: department.ID,
+			DepartmentID: &department.ID,
 			Color:        name.Color,
 		}
 		db.Create(&employee)

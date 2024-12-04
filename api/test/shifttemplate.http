@@ -12,6 +12,7 @@ Content-Type: application/json
     "employee_id": 1,
     "description": "Erste Januarwoche",
     "monday": {
+        
         "shift_type_id": 1
     },
     "tuesday": {

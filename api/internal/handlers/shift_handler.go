@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"shift-planner/api/internal/models"
 
@@ -29,7 +29,7 @@ func (h *ShiftHandler) GetShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Schicht nicht gefunden",
 			Data:    nil,
 		}
-		fmt.Printf("GetShift Error: %v\n", response)
+		log.Printf("GetShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -41,7 +41,7 @@ func (h *ShiftHandler) GetShift(w http.ResponseWriter, r *http.Request) {
 		Message: "Schicht erfolgreich abgerufen",
 		Data:    shift,
 	}
-	fmt.Printf("GetShift Success: %+v\n", response)
+	log.Printf("GetShift Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -55,7 +55,7 @@ func (h *ShiftHandler) GetShifts(w http.ResponseWriter, r *http.Request) {
 			Message: "Fehler beim Abrufen der Schichten",
 			Data:    nil,
 		}
-		fmt.Printf("GetShifts Error: %v\n", response)
+		log.Printf("GetShifts Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -67,7 +67,7 @@ func (h *ShiftHandler) GetShifts(w http.ResponseWriter, r *http.Request) {
 		Message: "Schichten erfolgreich abgerufen",
 		Data:    shifts,
 	}
-	fmt.Printf("GetShifts Success: %+v\n", response)
+	log.Printf("GetShifts Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -80,7 +80,7 @@ func (h *ShiftHandler) CreateShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Ungültige Eingabedaten",
 			Data:    nil,
 		}
-		fmt.Printf("CreateShift Error: %v\n", response)
+		log.Printf("CreateShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -94,7 +94,7 @@ func (h *ShiftHandler) CreateShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Ungültiger Schichttyp",
 			Data:    nil,
 		}
-		fmt.Printf("CreateShift Error: %v\n", response)
+		log.Printf("CreateShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -108,7 +108,7 @@ func (h *ShiftHandler) CreateShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Fehler beim Erstellen der Schicht",
 			Data:    nil,
 		}
-		fmt.Printf("CreateShift Error: %v\n", response)
+		log.Printf("CreateShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -122,7 +122,7 @@ func (h *ShiftHandler) CreateShift(w http.ResponseWriter, r *http.Request) {
 		Message: "Schicht erfolgreich erstellt",
 		Data:    shift,
 	}
-	fmt.Printf("CreateShift Success: %+v\n", response)
+	log.Printf("CreateShift Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -137,7 +137,7 @@ func (h *ShiftHandler) UpdateShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Schicht nicht gefunden",
 			Data:    nil,
 		}
-		fmt.Printf("UpdateShift Error: %v\n", response)
+		log.Printf("UpdateShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -150,7 +150,7 @@ func (h *ShiftHandler) UpdateShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Ungültige Eingabedaten",
 			Data:    nil,
 		}
-		fmt.Printf("UpdateShift Error: %v\n", response)
+		log.Printf("UpdateShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -164,7 +164,7 @@ func (h *ShiftHandler) UpdateShift(w http.ResponseWriter, r *http.Request) {
 		Message: "Schicht erfolgreich aktualisiert",
 		Data:    shift,
 	}
-	fmt.Printf("UpdateShift Success: %+v\n", response)
+	log.Printf("UpdateShift Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -179,7 +179,7 @@ func (h *ShiftHandler) DeleteShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Schicht nicht gefunden",
 			Data:    nil,
 		}
-		fmt.Printf("DeleteShift Error: %v\n", response)
+		log.Printf("DeleteShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -192,7 +192,7 @@ func (h *ShiftHandler) DeleteShift(w http.ResponseWriter, r *http.Request) {
 			Message: "Fehler beim Löschen der Schicht",
 			Data:    nil,
 		}
-		fmt.Printf("DeleteShift Error: %v\n", response)
+		log.Printf("DeleteShift Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -204,7 +204,7 @@ func (h *ShiftHandler) DeleteShift(w http.ResponseWriter, r *http.Request) {
 		Message: "Schicht erfolgreich gelöscht",
 		Data:    nil,
 	}
-	fmt.Printf("DeleteShift Success: %+v\n", response)
+	log.Printf("DeleteShift Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }

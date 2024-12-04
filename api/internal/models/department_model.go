@@ -1,9 +1,14 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Department struct {
-	gorm.Model
+	ID          uint       `json:"id"`         // statt ID
+	CreatedAt   time.Time  `json:"created_at"` // statt CreatedAt
+	UpdatedAt   time.Time  `json:"updated_at"` // statt UpdatedAt
+	DeletedAt   *time.Time `json:"deleted_at"` // statt DeletedAt
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	Color       string     `json:"color"`

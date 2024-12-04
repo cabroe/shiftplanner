@@ -25,4 +25,4 @@ Content-Type: application/json
 }
 
 ### Abteilung löschen
-DELETE http://localhost:8080/api/departments/1
+DELETE http://localhost:8080/api/departments/2

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"shift-planner/api/internal/models"
 
@@ -35,6 +36,7 @@ func (h *ShiftTemplateHandler) GetShiftTemplates(w http.ResponseWriter, r *http.
 			Message: "Fehler beim Abrufen der Schichtvorlagen",
 			Data:    nil,
 		}
+		log.Printf("GetShiftTemplates Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -46,6 +48,7 @@ func (h *ShiftTemplateHandler) GetShiftTemplates(w http.ResponseWriter, r *http.
 		Message: "Schichtvorlagen erfolgreich abgerufen",
 		Data:    shiftTemplates,
 	}
+	log.Printf("GetShiftTemplates Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -58,6 +61,7 @@ func (h *ShiftTemplateHandler) CreateShiftTemplate(w http.ResponseWriter, r *htt
 			Message: "Ungültige Eingabedaten",
 			Data:    nil,
 		}
+		log.Printf("CreateShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -72,6 +76,7 @@ func (h *ShiftTemplateHandler) CreateShiftTemplate(w http.ResponseWriter, r *htt
 				Message: "Mitarbeiter nicht gefunden",
 				Data:    nil,
 			}
+			log.Printf("CreateShiftTemplate Error: %v\n", response)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(response)
@@ -86,6 +91,7 @@ func (h *ShiftTemplateHandler) CreateShiftTemplate(w http.ResponseWriter, r *htt
 			Message: "Fehler beim Erstellen der Schichtvorlage",
 			Data:    nil,
 		}
+		log.Printf("CreateShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -107,6 +113,7 @@ func (h *ShiftTemplateHandler) CreateShiftTemplate(w http.ResponseWriter, r *htt
 		Message: "Schichtvorlage erfolgreich erstellt",
 		Data:    shiftTemplate,
 	}
+	log.Printf("CreateShiftTemplate Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -131,6 +138,7 @@ func (h *ShiftTemplateHandler) GetShiftTemplate(w http.ResponseWriter, r *http.R
 			Message: "Schichtvorlage nicht gefunden",
 			Data:    nil,
 		}
+		log.Printf("GetShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -142,6 +150,7 @@ func (h *ShiftTemplateHandler) GetShiftTemplate(w http.ResponseWriter, r *http.R
 		Message: "Schichtvorlage erfolgreich abgerufen",
 		Data:    shiftTemplate,
 	}
+	log.Printf("GetShiftTemplate Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -156,6 +165,7 @@ func (h *ShiftTemplateHandler) UpdateShiftTemplate(w http.ResponseWriter, r *htt
 			Message: "Schichtvorlage nicht gefunden",
 			Data:    nil,
 		}
+		log.Printf("UpdateShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -168,6 +178,7 @@ func (h *ShiftTemplateHandler) UpdateShiftTemplate(w http.ResponseWriter, r *htt
 			Message: "Ungültige Eingabedaten",
 			Data:    nil,
 		}
+		log.Printf("UpdateShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
@@ -182,6 +193,7 @@ func (h *ShiftTemplateHandler) UpdateShiftTemplate(w http.ResponseWriter, r *htt
 				Message: "Mitarbeiter nicht gefunden",
 				Data:    nil,
 			}
+			log.Printf("UpdateShiftTemplate Error: %v\n", response)
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(response)
@@ -206,6 +218,7 @@ func (h *ShiftTemplateHandler) UpdateShiftTemplate(w http.ResponseWriter, r *htt
 		Message: "Schichtvorlage erfolgreich aktualisiert",
 		Data:    shiftTemplate,
 	}
+	log.Printf("UpdateShiftTemplate Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
@@ -220,6 +233,7 @@ func (h *ShiftTemplateHandler) DeleteShiftTemplate(w http.ResponseWriter, r *htt
 			Message: "Schichtvorlage nicht gefunden",
 			Data:    nil,
 		}
+		log.Printf("DeleteShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
@@ -232,6 +246,7 @@ func (h *ShiftTemplateHandler) DeleteShiftTemplate(w http.ResponseWriter, r *htt
 			Message: "Fehler beim Löschen der Schichtvorlage",
 			Data:    nil,
 		}
+		log.Printf("DeleteShiftTemplate Error: %v\n", response)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response)
@@ -243,6 +258,7 @@ func (h *ShiftTemplateHandler) DeleteShiftTemplate(w http.ResponseWriter, r *htt
 		Message: "Schichtvorlage erfolgreich gelöscht",
 		Data:    nil,
 	}
+	log.Printf("DeleteShiftTemplate Success: %+v\n", response)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
